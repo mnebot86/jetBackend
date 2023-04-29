@@ -74,24 +74,10 @@ const userSchema = new mongoose.Schema(
 			enum: ['Not Complete', 'Pending', 'Completed'],
 			default: 'Not Complete',
 		},
-		requests: [
+		players: [
 			{
 				type: mongoose.Types.ObjectId,
-				ref: 'Request',
-				default: [],
-			},
-		],
-		requestQues: [
-			{
-				type: mongoose.Types.ObjectId,
-				ref: 'Request',
-				default: [],
-			},
-		],
-		linkedAccounts: [
-			{
-				type: mongoose.Types.ObjectId,
-				ref: 'User',
+				ref: 'Player',
 			},
 		],
 	},

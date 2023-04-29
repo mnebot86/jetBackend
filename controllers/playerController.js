@@ -1,4 +1,5 @@
 import Player from '../models/player.js';
+import User from '../models/user.js';
 import { StatusCodes } from 'http-status-codes';
 import Joi from 'joi';
 
@@ -12,22 +13,25 @@ export const addPlayer = async (req, res) => {
 	}
 
 	try {
-		const { firstName, lastName, street, city, state, zip } = req.body;
+		const { firstName, lastName, birthday, street, city, state, zip } =
+			req.body;
 
 		const alreadyExist = await Player.findOne({
 			firstName,
 			lastName,
+			birthday,
 		});
 
 		if (alreadyExist) {
 			return res.status(StatusCodes.BAD_REQUEST).json({
-				error: `${firstName} ${lastName} with this address already exists`,
+				error: `${firstName} ${lastName} with this birthday already exists`,
 				field: 'name',
 			});
 		}
 
 		const player = await Player.create({
 			...req.body,
+			guardians: [req.userId],
 			address: {
 				street,
 				city,
@@ -35,6 +39,12 @@ export const addPlayer = async (req, res) => {
 				zip,
 			},
 		});
+
+		await User.findByIdAndUpdate(
+			req.userId,
+			{ $push: { players: player._doc._id } },
+			{ new: true }
+		);
 
 		return res.status(StatusCodes.CREATED).json({
 			message: 'Player created successfully',
