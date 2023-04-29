@@ -40,21 +40,7 @@ const playerSchema = new mongoose.Schema(
 				required: [true, 'Provided a group id'],
 			},
 		],
-		requests: [
-			{
-				type: mongoose.Types.ObjectId,
-				ref: 'Request',
-				default: [],
-			},
-		],
-		requestQues: [
-			{
-				type: mongoose.Types.ObjectId,
-				ref: 'Request',
-				default: [],
-			},
-		],
-		linkedAccounts: [
+		guardians: [
 			{
 				type: mongoose.Types.ObjectId,
 				ref: 'User',
