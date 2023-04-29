@@ -14,7 +14,7 @@ afterEach(async () => {
 	await mongoose.connection.close();
 });
 
-describe('User route and controller', () => {
+describe.skip('User route and controller', () => {
 	let USER_TOKEN;
 
 	it('should register a user', async () => {

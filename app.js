@@ -4,6 +4,7 @@ import morgan from 'morgan';
 import cors from 'cors';
 import { Server } from 'socket.io';
 import http from 'http';
+import 'express-async-errors';
 
 // db and authenticateUser
 import { mongoConnect } from './db/connection.js';

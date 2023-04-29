@@ -68,7 +68,6 @@ const userSchema = new mongoose.Schema(
 		group: {
 			type: mongoose.Types.ObjectId,
 			ref: 'Group',
-			required: [true, 'Provided a group id'],
 		},
 		backgroundCheck: {
 			type: String,

@@ -1,8 +1,8 @@
 import express from 'express';
-import { getPlayersByGroup } from '../controllers/playerController.js';
+import { addPlayer } from '../controllers/playerController.js';
 
 const router = express.Router();
 
-router.route('/').post(getPlayersByGroup);
+router.route('/').post(addPlayer);
 
 export default router;
