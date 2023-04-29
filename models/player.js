@@ -1,7 +1,5 @@
 import mongoose from 'mongoose';
 import validator from 'validator';
-import bcrypt from 'bcryptjs';
-import jwt from 'jsonwebtoken';
 
 const playerSchema = new mongoose.Schema(
 	{
@@ -10,37 +8,17 @@ const playerSchema = new mongoose.Schema(
 			minlength: 2,
 			maxlength: 20,
 			trim: true,
+			required: [true, 'Please provide first name'],
 		},
 		lastName: {
 			type: String,
 			maxlength: 20,
-		},
-		email: {
-			type: String,
-			required: [true, 'Email is required'],
-			validate: {
-				validator: validator.isEmail,
-				message: 'Please provide a valid email',
-			},
-			unique: true,
+			required: [true, 'Please provide last name'],
 		},
 		phoneNumber: {
 			type: String,
 			minlength: 10,
-		},
-		password: {
-			type: String,
-			required: [true, 'Password is required'],
-			select: false,
-			validate: {
-				validator: (password) => {
-					return /^(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,}$/.test(
-						password
-					);
-				},
-				message:
-					'Password should be at least 8 characters long, contain at least one uppercase letter, one number, and one of the following symbols: !@#$%^&*',
-			},
+			required: [true, 'Please provide phone number'],
 		},
 		avatar: {
 			type: String,
@@ -48,24 +26,14 @@ const playerSchema = new mongoose.Schema(
 				validator: validator.isURL,
 				message: 'Please provide a valid url',
 			},
+			required: [true, 'Please provide image'],
 		},
 		role: {
 			type: String,
 			enum: ['FOOTBALL_PLAYER', 'CHEERLEADER'],
 			required: [true, 'Please select a role'],
 		},
-		position: {
-			type: String,
-			enum: [
-				'N/A',
-				'Head',
-				'Assistant',
-				'Defensive Coordinator',
-				'Offensive Coordinator',
-			],
-			default: 'N/A',
-		},
-		groups: [
+		group: [
 			{
 				type: mongoose.Types.ObjectId,
 				ref: 'Group',
@@ -94,12 +62,15 @@ const playerSchema = new mongoose.Schema(
 		],
 		age: {
 			type: Number,
+			required: [true, 'Please provide age'],
 		},
 		birthday: {
 			type: Date,
+			required: [true, 'Please provide birthday'],
 		},
 		grade: {
 			type: Number,
+			required: [true, 'Please provide grade'],
 		},
 		weight: {
 			type: Number,
@@ -191,23 +162,5 @@ const playerSchema = new mongoose.Schema(
 	},
 	{ timestamps: true }
 );
-
-playerSchema.pre('save', async function () {
-	const salt = await bcrypt.genSalt(11);
-	this.password = await bcrypt.hash(this.password, salt);
-});
-
-playerSchema.methods.createJWT = function () {
-	const SECRET = process.env.JWT_SECRET;
-	const LIFETIME = process.env.JWT_LIFETIME;
-
-	return jwt.sign({ userId: this._id }, SECRET, { expiresIn: LIFETIME });
-};
-
-playerSchema.methods.comparePassword = async function (candidatePassword) {
-	const isMatch = await bcrypt.compare(candidatePassword, this.password);
-
-	return isMatch;
-};
 
 export default mongoose.model('Player', playerSchema);
