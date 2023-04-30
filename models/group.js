@@ -7,10 +7,15 @@ const groupSchema = new mongoose.Schema(
 			required: [true, 'Provide a name for role'],
 			enum: [
 				'Varsity',
+				'Varsity Cheer',
 				'Junior Varsity',
+				'Junior Varsity Cheer',
 				'Peewee',
+				'Peewee Cheer',
 				'Junior Peewee',
+				'Junior Peewee Cheer',
 				'Flag',
+				'Flag Cheer',
 			],
 		},
 		ages: {
