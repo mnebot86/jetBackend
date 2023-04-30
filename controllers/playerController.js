@@ -4,7 +4,7 @@ import { StatusCodes } from 'http-status-codes';
 import Joi from 'joi';
 
 export const addPlayer = async (req, res) => {
-	const schema = validateRequestSchema(req.body);
+	const schema = addPlayerSchema(req.body);
 
 	if (schema.error) {
 		return res.status(StatusCodes.BAD_REQUEST).json({
@@ -60,7 +60,7 @@ export const addPlayer = async (req, res) => {
 	}
 };
 
-const validateRequestSchema = (requestBody) => {
+const addPlayerSchema = (requestBody) => {
 	const schema = Joi.object({
 		firstName: Joi.string().required(),
 		lastName: Joi.string().required(),
