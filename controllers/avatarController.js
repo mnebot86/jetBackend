@@ -41,8 +41,6 @@ export const createAvatar = async (req, res) => {
 			});
 		}
 
-		console.log(avatar._doc);
-
 		res.status(StatusCodes.OK).json(avatar._doc);
 	} catch (error) {
 		console.log(error);

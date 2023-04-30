@@ -1,39 +1,25 @@
 import User from '../models/user.js';
-import { passwordValidation } from '../utils/validators.js';
 import { StatusCodes } from 'http-status-codes';
-import jwt from 'jsonwebtoken';
+import Joi from 'joi';
 
 export const register = async (req, res) => {
-	const { email, password, confirmPassword, role } = req.body;
+	const schema = registerSchema(req.body);
 
-	if (!email || !password || !confirmPassword || !role) {
-		return res
-			.status(StatusCodes.BAD_REQUEST)
-			.json({ error: 'Please provided all values' });
-	}
-
-	const passwordErrors = passwordValidation(password);
-
-	if (passwordErrors.length > 0) {
+	if (schema.error) {
 		return res.status(StatusCodes.BAD_REQUEST).json({
-			error: passwordErrors.join(', '),
+			error: schema.error.details[0].message,
 		});
 	}
 
-	const passwordDoNotMatch = password !== confirmPassword;
+	const { email, role, password } = req.body;
 
-	if (passwordDoNotMatch) {
-		res.status(StatusCodes.BAD_REQUEST).json({
-			error: "Password don't match",
-		});
-	}
-
-	const userAlreadyExists = await User.findOne({ email });
+	const userAlreadyExists = await User.findOne({ email: req.body.email });
 
 	if (userAlreadyExists) {
-		return res
-			.status(StatusCodes.BAD_REQUEST)
-			.json({ error: 'Email already in use' });
+		return res.status(StatusCodes.BAD_REQUEST).json({
+			error: 'Email already in use',
+			field: 'email',
+		});
 	}
 
 	const user = await User.create({
@@ -44,15 +30,24 @@ export const register = async (req, res) => {
 
 	const token = user.createJWT();
 
-	return res.status(StatusCodes.CREATED).json({ token });
+	return res.status(StatusCodes.CREATED).json({
+		message: 'Player created successfully',
+		data: {
+			token,
+		},
+	});
 };
 
 export const login = async (req, res) => {
-	const { email, password } = req.body;
+	const schema = loginSchema(req.body);
 
-	if (!email || !password) {
-		return res.json({ error: 'Please provided all values' });
+	if (schema.error) {
+		return res.status(StatusCodes.BAD_REQUEST).json({
+			error: schema.error.details[0].message,
+		});
 	}
+
+	const { email, password } = req.body;
 
 	const user = await User.findOne({ email }).select('+password');
 
@@ -70,7 +65,10 @@ export const login = async (req, res) => {
 
 	user.password = undefined;
 
-	res.status(StatusCodes.OK).json({ token });
+	res.status(StatusCodes.OK).json({
+		message: 'Login successfully',
+		token,
+	});
 };
 
 export const updateUser = async (req, res) => {
@@ -82,12 +80,14 @@ export const updateUser = async (req, res) => {
 
 	const user = await User.findByIdAndUpdate(id, req.body, { new: true });
 
-	return res.status(StatusCodes.OK).json({ ...user._doc });
+	return res.status(StatusCodes.OK).json({
+		message: 'Updated Successful',
+		data: { ...user._doc },
+	});
 };
 
 export const verifyUser = async (req, res) => {
-	const { token } = req.body;
-	const { userId } = jwt.decode(token);
+	const { userId } = req;
 
 	if (userId) {
 		const user = await User.findOne({ _id: userId }).populate({
@@ -108,7 +108,12 @@ export const verifyUser = async (req, res) => {
 				.json({ error: `No user with id ${userId}` });
 		}
 
-		return res.status(StatusCodes.OK).json({ ...user._doc });
+		return res.status(StatusCodes.OK).json({
+			message: 'Verification Successful',
+			data: {
+				...user._doc,
+			},
+		});
 	}
 };
 
@@ -129,17 +134,24 @@ export const getUser = async (req, res) => {
 			.json({ error: 'No user found by that id' });
 	}
 
-	return res.status(StatusCodes.OK).json({ ...user._doc });
+	return res.status(StatusCodes.OK).json({
+		message: 'Successful',
+		data: { ...user._doc },
+	});
 };
 
 export const getUsers = async (req, res) => {
 	const users = await User.find({});
 
 	if (!users) {
-		res.status(StatusCodes.OK).json({ msg: 'No users in the database' });
+		res.status(StatusCodes.OK).json({ error: 'No users in the database' });
 	}
 
-	res.status(StatusCodes.OK).json({ ...users, count: users.length });
+	res.status(StatusCodes.OK).json({
+		message: 'Successful',
+		count: users.length,
+		data: { ...users },
+	});
 };
 
 export const deleteUser = async (req, res) => {
@@ -152,4 +164,24 @@ export const deleteUser = async (req, res) => {
 	await User.findByIdAndDelete(id);
 
 	return res.status(StatusCodes.OK).json({ msg: 'Deleted!' });
+};
+
+const registerSchema = (requestBody) => {
+	const schema = Joi.object({
+		email: Joi.string().email().required(),
+		password: Joi.string().min(8).max(20).required(),
+		confirmPassword: Joi.string().valid(Joi.ref('password')).required(),
+		role: Joi.string().required(),
+	});
+
+	return schema.validate(requestBody);
+};
+
+const loginSchema = (requestBody) => {
+	const schema = Joi.object({
+		email: Joi.string().email().required(),
+		password: Joi.string().required(),
+	});
+
+	return schema.validate(requestBody);
 };
