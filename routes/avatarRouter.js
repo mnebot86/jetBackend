@@ -1,5 +1,6 @@
 import express from 'express';
 import { createAvatar } from '../controllers/avatarController.js';
+import { checkAuth } from '../middleware/authenticated.js';
 import multer from 'multer';
 
 const storage = multer.diskStorage({});
@@ -16,6 +17,6 @@ const uploads = multer({ storage, fileFilter });
 
 const router = express.Router();
 
-router.route('/').post(uploads.single('avatar'), createAvatar);
+router.route('/').post(uploads.single('avatar'), checkAuth, createAvatar);
 
 export default router;

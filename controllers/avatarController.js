@@ -13,16 +13,20 @@ cloudinary.config({
 
 export const createAvatar = async (req, res) => {
 	try {
-		const userId = req.file.originalname.split('_')[0];
+		const { userId } = req;
+
+		const { playerId } = req.body;
 
 		const result = await cloudinary.uploader.upload(req.file.path, {
-			public_id: `user_profile/${userId}`,
+			public_id: `user_profile/${playerId || userId}`,
 			width: 500,
 			height: 500,
 			crop: 'fill',
 		});
 
-		const alreadyExist = await Avatar.findOne({ createdBy: userId });
+		const alreadyExist = await Avatar.findOne({
+			createdBy: playerId || userId,
+		});
 
 		let avatar;
 
@@ -37,9 +41,11 @@ export const createAvatar = async (req, res) => {
 		} else {
 			avatar = await Avatar.create({
 				url: result.secure_url,
-				createdBy: userId,
+				createdBy: playerId || userId,
 			});
 		}
+
+		console.log(avatar._doc);
 
 		res.status(StatusCodes.OK).json(avatar._doc);
 	} catch (error) {

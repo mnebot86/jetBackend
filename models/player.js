@@ -21,12 +21,8 @@ const playerSchema = new mongoose.Schema(
 			required: [true, 'Please provide phone number'],
 		},
 		avatar: {
-			type: String,
-			validate: {
-				validator: validator.isURL,
-				message: 'Please provide a valid url',
-			},
-			required: [true, 'Please provide image'],
+			type: mongoose.Types.ObjectId,
+			ref: 'Avatar',
 		},
 		role: {
 			type: String,
