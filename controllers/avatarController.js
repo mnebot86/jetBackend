@@ -1,4 +1,6 @@
 import Avatar from '../models/avatar.js';
+import Player from '../models/player.js';
+import User from '../models/user.js';
 import dotenv from 'dotenv';
 import { StatusCodes } from 'http-status-codes';
 import { v2 as cloudinary } from 'cloudinary';
@@ -45,7 +47,15 @@ export const createAvatar = async (req, res) => {
 			});
 		}
 
-		console.log(avatar._doc);
+		if (!!playerId) {
+			await Player.findByIdAndUpdate(playerId, {
+				avatar: avatar._doc._id,
+			});
+		} else {
+			await User.findByIdAndUpdate(userId, {
+				avatar: avatar._doc._id,
+			});
+		}
 
 		res.status(StatusCodes.OK).json(avatar._doc);
 	} catch (error) {
