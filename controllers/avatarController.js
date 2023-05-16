@@ -16,18 +16,19 @@ cloudinary.config({
 export const createAvatar = async (req, res) => {
 	try {
 		const { userId } = req;
-
 		const { playerId } = req.body;
 
+		const id = playerId || userId;
+
 		const result = await cloudinary.uploader.upload(req.file.path, {
-			public_id: `user_profile/${playerId || userId}`,
+			public_id: `user_profile/${id}`,
 			width: 500,
 			height: 500,
 			crop: 'fill',
 		});
 
 		const alreadyExist = await Avatar.findOne({
-			createdBy: playerId || userId,
+			createdBy: id,
 		});
 
 		let avatar;
@@ -36,25 +37,33 @@ export const createAvatar = async (req, res) => {
 			avatar = await Avatar.findByIdAndUpdate(
 				alreadyExist._doc._id,
 				{
-					url: result._id,
+					url: result.secure_url,
 				},
 				{ new: true }
 			);
 		} else {
 			avatar = await Avatar.create({
 				url: result.secure_url,
-				createdBy: playerId || userId,
+				createdBy: id,
 			});
 		}
 
 		if (!!playerId) {
-			await Player.findByIdAndUpdate(playerId, {
-				avatar: avatar._doc._id,
-			});
+			const player = await Player.findByIdAndUpdate(
+				playerId,
+				{
+					avatar: avatar._doc._id,
+				},
+				{ new: true }
+			);
 		} else {
-			await User.findByIdAndUpdate(userId, {
-				avatar: avatar._doc._id,
-			});
+			const user = await User.findByIdAndUpdate(
+				userId,
+				{
+					avatar: avatar._doc._id,
+				},
+				{ new: true }
+			);
 		}
 
 		res.status(StatusCodes.OK).json(avatar._doc);
