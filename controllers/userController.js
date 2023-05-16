@@ -91,15 +91,8 @@ export const verifyUser = async (req, res) => {
 
 	if (userId) {
 		const user = await User.findOne({ _id: userId }).populate({
-			path: 'group',
-			populate: [
-				{
-					path: 'roster',
-				},
-				{
-					path: 'games',
-				},
-			],
+			path: 'players',
+			populate: [{ path: 'avatar' }, { path: 'group' }],
 		});
 
 		if (!user) {

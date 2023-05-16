@@ -29,13 +29,11 @@ const playerSchema = new mongoose.Schema(
 			enum: ['FOOTBALL_PLAYER', 'CHEERLEADER'],
 			required: [true, 'Please select a role'],
 		},
-		group: [
-			{
-				type: mongoose.Types.ObjectId,
-				ref: 'Group',
-				required: [true, 'Provided a group id'],
-			},
-		],
+		group: {
+			type: mongoose.Types.ObjectId,
+			ref: 'Group',
+			required: [true, 'Provided a group id'],
+		},
 		guardians: [
 			{
 				type: mongoose.Types.ObjectId,
