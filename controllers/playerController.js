@@ -54,6 +54,44 @@ export const addPlayer = async (req, res) => {
 		});
 	} catch (err) {
 		console.error(err);
+
+		return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+			error: 'An unexpected error occurred',
+		});
+	}
+};
+
+export const getPlayer = async (req, res) => {
+	const schema = getPlayerSchema(req.params);
+
+	const {
+		params: { id },
+	} = req;
+
+	if (schema.error) {
+		return res.status(StatusCodes.BAD_REQUEST).json({
+			error: schema.error.details[0].message,
+		});
+	}
+
+	try {
+		const player = await Player.findById(id);
+
+		if (!player) {
+			return res.status(StatusCodes.NOT_FOUND).json({
+				error: `No Player with ID ${id} found`,
+			});
+		}
+
+		return res.status(StatusCodes.OK).json({
+			message: 'Player Found',
+			data: {
+				player,
+			},
+		});
+	} catch (err) {
+		console.error(err);
+
 		return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
 			error: 'An unexpected error occurred',
 		});
@@ -80,6 +118,14 @@ const addPlayerSchema = (requestBody) => {
 		avatar: Joi.string(),
 		allergies: Joi.array(),
 		medicalConditions: Joi.array(),
+	});
+
+	return schema.validate(requestBody);
+};
+
+const getPlayerSchema = (requestBody) => {
+	const schema = Joi.object({
+		id: Joi.string().required(),
 	});
 
 	return schema.validate(requestBody);
