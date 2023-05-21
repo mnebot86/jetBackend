@@ -75,7 +75,17 @@ export const getPlayer = async (req, res) => {
 	}
 
 	try {
-		const player = await Player.findById(id);
+		const player = await Player.findById(id)
+			.populate({
+				path: 'avatar',
+			})
+			.populate({
+				path: 'group',
+				select: 'name',
+			})
+			.populate({
+				path: 'guardians',
+			});
 
 		if (!player) {
 			return res.status(StatusCodes.NOT_FOUND).json({
@@ -112,7 +122,7 @@ const addPlayerSchema = (requestBody) => {
 		zip: Joi.string().required(),
 		phoneNumber: Joi.string().required(),
 		role: Joi.string().required(),
-		doctor: Joi.string().required(),
+		doctorName: Joi.string().required(),
 		doctorNumber: Joi.string().required(),
 		group: Joi.string().required(),
 		avatar: Joi.string(),
