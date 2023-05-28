@@ -43,11 +43,8 @@ const userSchema = new mongoose.Schema(
 			},
 		},
 		avatar: {
-			type: String,
-			validate: {
-				validator: validator.isURL,
-				message: 'Please provide a valid url',
-			},
+			type: mongoose.Types.ObjectId,
+			ref: 'Avatar',
 		},
 		role: {
 			type: String,

@@ -85,6 +85,9 @@ export const getPlayer = async (req, res) => {
 			})
 			.populate({
 				path: 'guardians',
+				populate: {
+					path: 'avatar',
+				},
 			});
 
 		if (!player) {
