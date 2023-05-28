@@ -1,13 +1,18 @@
 import Group from '../models/group.js';
 import { StatusCodes } from 'http-status-codes';
 import { BadRequestError } from '../errors/index.js';
+import Joi from 'joi';
 
-const createGroup = async (req, res) => {
-	const { name, maxAge, minAge } = req.body;
+export const createGroup = async (req, res) => {
+	const schema = createGroupSchema(req.body);
 
-	if (!name || !maxAge || !minAge) {
-		res.json({ error: 'Please provide all fields' });
+	if (schema.error) {
+		return res.status(StatusCodes.BAD_REQUEST).json({
+			error: schema.error.details[0].message,
+		});
 	}
+
+	const { name, maxAge, minAge } = req.body;
 
 	const groupAlreadyExist = await Group.findOne({ name });
 
@@ -27,27 +32,39 @@ const createGroup = async (req, res) => {
 		},
 	});
 
-	res.status(StatusCodes.CREATED).json({ ...group._doc });
+	res.status(StatusCodes.CREATED).json({
+		message: 'Group Created',
+		data: {
+			...group._doc,
+		},
+	});
 };
 
-const getGroups = async (req, res) => {
+export const getGroups = async (req, res) => {
 	const groups = await Group.find({});
 
 	if (!groups) {
 		return res.json({ msg: 'No groups found' });
 	}
 
-	res.status(StatusCodes.OK).json({ ...groups });
+	res.status(StatusCodes.OK).json({
+		message: 'Found groups',
+		data: {
+			...groups,
+		},
+	});
 };
 
-const getGroup = async (req, res) => {
-	const { id } = req.params;
+export const getGroup = async (req, res) => {
+	const schema = getGroupORDeleteSchema(req.params);
 
-	if (!id) {
-		return res
-			.status(StatusCodes.BAD_REQUEST)
-			.json({ error: 'Id is required' });
+	if (schema.error) {
+		return res.status(StatusCodes.BAD_REQUEST).json({
+			error: schema.error.details[0].message,
+		});
 	}
+
+	const { id } = req.params;
 
 	const group = await Group.findOne({ _id: id }).populate([
 		{ path: 'coaches' },
@@ -60,10 +77,15 @@ const getGroup = async (req, res) => {
 			.json({ error: 'No group found' });
 	}
 
-	return res.status(StatusCodes.OK).json({ ...group._doc });
+	return res.status(StatusCodes.OK).json({
+		message: 'Group Found',
+		data: {
+			...group._doc,
+		},
+	});
 };
 
-const updateGroup = async (req, res) => {
+export const updateGroup = async (req, res) => {
 	const { id } = req.params;
 
 	if (!id) {
@@ -72,22 +94,48 @@ const updateGroup = async (req, res) => {
 
 	const group = await Group.findByIdAndUpdate(id, req.body, { new: true });
 
-	res.status(StatusCodes.OK).json({ ...group._doc });
+	res.status(StatusCodes.OK).json({
+		message: 'Group Updated',
+		data: {
+			...group._doc,
+		},
+	});
 };
 
-const deleteGroup = async (req, res) => {
-	const { id } = req.params;
+export const deleteGroup = async (req, res) => {
+	const schema = getGroupORDeleteSchema(req.params);
 
-	console.log('ID', id);
-	if (!id) {
-		return res
-			.status(StatusCodes.BAD_REQUEST)
-			.json({ error: 'Id is required' });
+	if (schema.error) {
+		return res.status(StatusCodes.BAD_REQUEST).json({
+			error: schema.error.details[0].message,
+		});
 	}
+
+	const { id } = req.params;
 
 	await Group.findByIdAndDelete(id);
 
-	return res.status(StatusCodes.OK).json({ msg: 'Deleted' });
+	return res.status(StatusCodes.OK).json({
+		data: {
+			message: 'Delete Successful',
+		},
+	});
 };
 
-export { createGroup, getGroups, getGroup, updateGroup, deleteGroup };
+const createGroupSchema = (requestBody) => {
+	const schema = Joi.object({
+		name: Joi.string().required(),
+		maxAge: Joi.number().required(),
+		minAge: Joi.number().required(),
+	});
+
+	return schema.validate(requestBody);
+};
+
+const getGroupORDeleteSchema = (requestParams) => {
+	const schema = Joi.object({
+		id: Joi.string().required(),
+	});
+
+	return schema.validate(requestParams);
+};

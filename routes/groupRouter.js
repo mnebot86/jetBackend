@@ -1,4 +1,6 @@
 import express from 'express';
+import { checkAuth } from '../middleware/authenticated.js';
+
 import {
 	createGroup,
 	getGroups,
@@ -9,7 +11,11 @@ import {
 
 const router = express.Router();
 
-router.route('/').post(createGroup).get(getGroups);
-router.route('/:id').get(getGroup).delete(deleteGroup).patch(updateGroup);
+router.route('/').post(checkAuth, createGroup).get(checkAuth, getGroups);
+router
+	.route('/:id')
+	.get(checkAuth, getGroup)
+	.delete(checkAuth, deleteGroup)
+	.patch(checkAuth, updateGroup);
 
 export default router;
