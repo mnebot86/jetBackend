@@ -6,10 +6,7 @@ const avatarSchema = new mongoose.Schema(
 			type: String,
 			required: [true, 'Provide a url for image'],
 		},
-		createdBy: {
-			type: mongoose.Types.ObjectId,
-			ref: 'User',
-		},
+		cloudinaryId: String,
 	},
 	{ timestamps: true }
 );

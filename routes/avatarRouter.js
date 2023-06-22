@@ -17,6 +17,6 @@ const uploads = multer({ storage, fileFilter });
 
 const router = express.Router();
 
-router.route('/').post(uploads.single('avatar'), checkAuth, createAvatar);
+router.route('/').post(uploads.single('avatar'), createAvatar);
 
 export default router;

@@ -43,13 +43,19 @@ const userSchema = new mongoose.Schema(
 			},
 		},
 		avatar: {
-			type: mongoose.Types.ObjectId,
-			ref: 'Avatar',
+			url: {
+				type: String,
+				require: [true, 'Please Provide an url'],
+			},
+			cloudinaryId: {
+				type: String,
+				require: [true, 'CloudinaryId required'],
+			},
 		},
-		role: {
-			type: String,
-			enum: ['COACH', 'TEAM_MOM', 'GUARDIAN'],
-			required: [true, 'Please select a role'],
+		roles: {
+			type: [String],
+			enum: ['COACH', 'TEAM_MOM', 'GUARDIAN', 'PLAYER'],
+			default: ['GUARDIAN'],
 		},
 		position: {
 			type: String,

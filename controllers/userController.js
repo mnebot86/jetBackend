@@ -11,13 +11,13 @@ export const register = async (req, res) => {
 		});
 	}
 
-	const { email, role, password } = req.body;
+	const { email, role, password, avatar } = req.body;
 
 	const userAlreadyExists = await User.findOne({ email: req.body.email });
 
 	if (userAlreadyExists) {
 		return res.status(StatusCodes.BAD_REQUEST).json({
-			error: 'Email already in use',
+			error: '"Email" already in use',
 			field: 'email',
 		});
 	}
@@ -26,6 +26,10 @@ export const register = async (req, res) => {
 		role,
 		email,
 		password,
+		avatar: {
+			url: avatar.url,
+			cloudinaryId: avatar.cloudinaryId,
+		},
 	});
 
 	const token = user.createJWT();
@@ -161,10 +165,21 @@ export const deleteUser = async (req, res) => {
 
 const registerSchema = (requestBody) => {
 	const schema = Joi.object({
+		// role: Joi.string().required(),
 		email: Joi.string().email().required(),
-		password: Joi.string().min(8).max(20).required(),
-		confirmPassword: Joi.string().valid(Joi.ref('password')).required(),
-		role: Joi.string().required(),
+		password: Joi.string()
+			.min(8)
+			.regex(/^(?=.*[A-Z])/)
+			.message('"Password" must contain at least one uppercase letter.')
+			.regex(/^(?=.*\d)/)
+			.message('"Password" must contain at least one digit.')
+			.regex(/^(?=.*[!@#$%^&*])/)
+			.message('"Password" must contain at least one special character.')
+			.required(),
+		avatar: Joi.object({
+			url: Joi.string().required(),
+			cloudinaryId: Joi.string().required(),
+		}),
 	});
 
 	return schema.validate(requestBody);
