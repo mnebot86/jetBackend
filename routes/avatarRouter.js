@@ -1,6 +1,5 @@
 import express from 'express';
 import { createAvatar } from '../controllers/avatarController.js';
-import { checkAuth } from '../middleware/authenticated.js';
 import multer from 'multer';
 
 const storage = multer.diskStorage({});
