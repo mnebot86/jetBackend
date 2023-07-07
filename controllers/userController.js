@@ -91,25 +91,32 @@ export const updateUser = async (req, res) => {
 };
 
 export const verifyUser = async (req, res) => {
-	const { userId } = req;
+	try {
+		const { userId } = req;
 
-	if (userId) {
-		const user = await User.findOne({ _id: userId }).populate({
-			path: 'players',
-			populate: [{ path: 'avatar' }, { path: 'group' }],
-		});
+		if (userId) {
+			const user = await User.findOne({ _id: userId }).populate({
+				path: 'players',
+				populate: [{ path: 'avatar' }, { path: 'group' }],
+			});
 
-		if (!user) {
-			return res
-				.status(StatusCodes.NOT_FOUND)
-				.json({ error: `No user with id ${userId}` });
+			if (!user) {
+				return res
+					.status(StatusCodes.NOT_FOUND)
+					.json({ error: `No user with id ${userId}` });
+			}
+
+			return res.status(StatusCodes.OK).json({
+				message: 'Verification Successful',
+				data: {
+					...user._doc,
+				},
+			});
 		}
-
-		return res.status(StatusCodes.OK).json({
-			message: 'Verification Successful',
-			data: {
-				...user._doc,
-			},
+	} catch (error) {
+		console.error('Error verifying user:', error);
+		return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+			error: 'An error occurred while verifying the user',
 		});
 	}
 };
