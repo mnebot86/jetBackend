@@ -22,7 +22,7 @@
 	"scripts": {
 		"start": "node server.js",
 		"start-dev": "nodemon --exec babel-node server.js",
-		"build": "echo 'No build step required.'",
+		"build": "yarn install",
 		"test": "jest --detectOpenHandles",
 		"seed": "node db/seed.js"
 	},
