@@ -11,7 +11,7 @@ export const register = async (req, res) => {
 		});
 	}
 
-	const { email, role, password, avatar } = req.body;
+	const { email, role, password } = req.body;
 
 	const userAlreadyExists = await User.findOne({ email: req.body.email });
 
@@ -26,10 +26,6 @@ export const register = async (req, res) => {
 		role,
 		email,
 		password,
-		avatar: {
-			url: avatar.url,
-			cloudinaryId: avatar.cloudinaryId,
-		},
 	});
 
 	const token = user.createJWT();
@@ -183,10 +179,6 @@ const registerSchema = (requestBody) => {
 			.regex(/^(?=.*[!@#$%^&*])/)
 			.message('"Password" must contain at least one special character.')
 			.required(),
-		avatar: Joi.object({
-			url: Joi.string().required(),
-			cloudinaryId: Joi.string().required(),
-		}),
 	});
 
 	return schema.validate(requestBody);

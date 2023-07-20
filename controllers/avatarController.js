@@ -12,10 +12,10 @@ cloudinary.config({
 
 export const createAvatar = async (req, res) => {
 	try {
-		const { uniqueId } = req.body;
+		const { userId } = req;
 
 		const result = await cloudinary.uploader.upload(req.file.path, {
-			public_id: `user_profile/${uniqueId}`,
+			public_id: `user_profile/${userId}`,
 			width: 500,
 			height: 500,
 			crop: 'fill',
@@ -23,7 +23,7 @@ export const createAvatar = async (req, res) => {
 
 		res.status(StatusCodes.OK).json({
 			url: result.secure_url,
-			cloudinaryId: uniqueId,
+			cloudinaryId: userId,
 		});
 	} catch (error) {
 		console.log(error);
