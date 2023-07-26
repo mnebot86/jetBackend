@@ -27,25 +27,44 @@ export const createFeedPost = async (req, res) => {
 };
 
 export const getFeedPosts = async (req, res) => {
-	const feedPosts = await FeedPost.find({});
+	const { page = 1, perPage = 15 } = req.query;
 
-	if (!feedPosts) {
+	const skip = (page - 1) * perPage;
+	const limit = parseInt(perPage);
+
+	try {
+		const totalPosts = await FeedPost.countDocuments();
+		const feedPosts = await FeedPost.find({})
+			.lean()
+			.skip(skip)
+			.limit(limit)
+			.sort({ createdAt: -1 });
+
+		if (!feedPosts || feedPosts.length === 0) {
+			return res.status(StatusCodes.OK).json({
+				message: 'No Feed Posts Found',
+				data: {
+					feedPost: [],
+					currentPage: page,
+					totalPages: Match.ceil(totalPosts / perPage),
+				},
+			});
+		}
+
 		return res.status(StatusCodes.OK).json({
-			message: 'Successfully!',
+			message: 'Successfully',
 			data: {
-				feedPosts: 'No Feed Posts Created',
+				feedPosts,
+				currentPage: page,
+				totalPages: Math.ceil(totalPosts / perPage),
 			},
 		});
+	} catch (error) {
+		return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+			message: 'Error fetching feed posts',
+			error: error.message,
+		});
 	}
-
-	const reverseFeedPost = feedPosts.reverse();
-
-	return res.status(StatusCodes.OK).json({
-		message: 'Successfully!',
-		data: {
-			reverseFeedPost,
-		},
-	});
 };
 
 export const getFeedPost = (req, res) => {
