@@ -67,12 +67,46 @@ export const getFeedPosts = async (req, res) => {
 	}
 };
 
-export const getFeedPost = (req, res) => {
-	return res.send('Get Feed Post');
+export const getFeedPost = async (req, res) => {
+	const {
+		params: { id },
+	} = req;
+
+	const feedPost = await FeedPost.findById(id);
+
+	if (!feedPost) {
+		return res.status(StatusCodes.NOT_FOUND).json({
+			message: 'Post not found',
+			data: {},
+		});
+	}
+
+	return res.status(StatusCodes.OK).json({ feedPost });
 };
 
-export const updateFeedPost = (req, res) => {
-	return res.send('Update Feed Post');
+export const updateFeedPost = async (req, res) => {
+	const {
+		body,
+		params: { id },
+	} = req;
+
+	const feedPost = await FeedPost.findByIdAndUpdate(id, body, {
+		new: true,
+	}).lean();
+
+	if (!feedPost) {
+		return res.status(StatusCodes.NOT_FOUND).json({
+			message: 'Feed Post not found',
+			data: {},
+		});
+	}
+
+	io.emit('update_feed', feedPost);
+
+	return res.status(StatusCodes.OK).json({
+		message: 'Post Updated Successful',
+		data: { feedPost },
+	});
 };
 
 export const deleteFeedPost = (req, res) => {
