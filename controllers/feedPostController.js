@@ -1,5 +1,7 @@
 import FeedPost from '../models/feedPost.js';
+import User from '../models/user.js';
 import { io } from '../app.js';
+import { sendNotifications } from '../utils/notifications.js';
 import { StatusCodes } from 'http-status-codes';
 import Joi from 'joi';
 
@@ -16,7 +18,24 @@ export const createFeedPost = async (req, res) => {
 
 	const feedPost = await FeedPost.create({ ...req.body, createdBy: userId });
 
+	const usersWithTokens = await User.find({
+		$and: [
+			{ _id: { $ne: userId } },
+			{ expoPushTokens: { $exists: true, $not: { $size: 0 } } },
+		],
+	});
+
+	const tokens = usersWithTokens.reduce(
+		(allTokens, user) => [...allTokens, ...user.expoPushTokens],
+		[]
+	);
+
+	const title = 'New Feed Post';
+	const body = feedPost.message;
+
 	io.emit('new_feed', feedPost);
+
+	await sendNotifications(tokens, title, body, 1);
 
 	return res.status(StatusCodes.CREATED).json({
 		message: 'Feed Post created successfully!',
@@ -103,14 +122,63 @@ export const updateFeedPost = async (req, res) => {
 
 	io.emit('update_feed', feedPost);
 
+	const { createdBy } = feedPost;
+
+	const user = await User.findById(createdBy);
+
+	if (!user) {
+		return res.status(StatusCodes.NOT_FOUND).json({
+			message: 'User not found',
+			data: {},
+		});
+	}
+
+	const otherUsers = await User.find({
+		_id: { $ne: createdBy },
+		expoPushTokens: { $exists: true, $not: { $size: 0 } },
+	});
+
+	const allTokens = otherUsers.reduce(
+		(tokensArray, otherUser) => [
+			...tokensArray,
+			...otherUser.expoPushTokens,
+		],
+		[]
+	);
+
+	const allUsersTitle = 'Feed Post Update';
+	const allUsersBody = `A feed post has been updated: ${feedPost.message}`;
+
+	await sendNotifications(allTokens, allUsersTitle, allUsersBody, 1);
+
 	return res.status(StatusCodes.OK).json({
 		message: 'Post Updated Successful',
 		data: { feedPost },
 	});
 };
 
-export const deleteFeedPost = (req, res) => {
-	return res.send('Delete Feed Post');
+export const deleteFeedPost = async (req, res) => {
+	const { id } = req.params;
+	const { userId } = req;
+
+	const deletedFeedPost = await FeedPost.findOneAndDelete({
+		_id: id,
+		createdBy: userId,
+	});
+
+	if (!deletedFeedPost) {
+		return res.status(StatusCodes.NOT_FOUND).json({
+			message: 'Feed Post not found or not authorized for deletion',
+			data: {},
+		});
+	}
+
+	io.emit('delete_feed', id);
+
+	return res.status(StatusCodes.OK).json({
+		message: 'Feed Post deleted successfully!',
+		data: { deletedFeedPost },
+	});
 };
 
 const createFeedPostSchema = (requestBody) => {
