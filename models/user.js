@@ -83,6 +83,11 @@ const userSchema = new mongoose.Schema(
 				ref: 'Player',
 			},
 		],
+		expoPushTokens: [
+			{
+				type: String,
+			},
+		],
 	},
 	{ timestamps: true }
 );
