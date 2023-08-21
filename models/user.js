@@ -55,7 +55,7 @@ const userSchema = new mongoose.Schema(
 		roles: {
 			type: [String],
 			enum: ['COACH', 'TEAM_MOM', 'GUARDIAN', 'PLAYER'],
-			default: ['GUARDIAN'],
+			default: ['COACH'],
 		},
 		position: {
 			type: String,

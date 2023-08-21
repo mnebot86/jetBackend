@@ -1,7 +1,6 @@
 import express from 'express';
 import dotenv from 'dotenv';
 import morgan from 'morgan';
-import cors from 'cors';
 import { Server } from 'socket.io';
 import http from 'http';
 import 'express-async-errors';
@@ -17,6 +16,7 @@ import requestRouter from './routes/requestRouter.js';
 import gameRouter from './routes/gameRouter.js';
 import avatarRouter from './routes/avatarRouter.js';
 import feedPostRouter from './routes/feedPostRouter.js';
+import playbookRouter from './routes/playBookRouter.js';
 
 // Middleware
 import {
@@ -37,7 +37,6 @@ if (process.env.NODE_ENV !== 'production') {
 	app.use(morgan('dev'));
 }
 
-// app.use(cors());
 app.use(express.json());
 
 // Routes
@@ -52,6 +51,7 @@ app.use('/api/v1/requests', requestRouter);
 app.use('/api/v1/games', gameRouter);
 app.use('/api/v1/avatar', avatarRouter);
 app.use('/api/v1/feedPosts', feedPostRouter);
+app.use('/api/v1/playbooks', playbookRouter);
 
 app.use(notFoundMiddleware);
 app.use(errorHandlerMiddleware);
