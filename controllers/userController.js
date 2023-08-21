@@ -163,7 +163,7 @@ export const deleteUser = async (req, res) => {
 
 	await User.findByIdAndDelete(id);
 
-	return res.status(StatusCodes.OK).json({ msg: 'Deleted!' });
+	return res.status(StatusCodes.OK).json({ message: 'Deleted!' });
 };
 
 const registerSchema = (requestBody) => {
