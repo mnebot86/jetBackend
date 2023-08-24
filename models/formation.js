@@ -6,6 +6,10 @@ const formationSchema = new mongoose.Schema(
 			type: String,
 			required: [true, 'Please provide name'],
 		},
+		image: {
+			type: String,
+			required: [true, 'Please provided an image url']
+		},
 		plays: [{ type: mongoose.Types.ObjectId, ref: 'Play' }],
 	},
 	{ timestamps: true }

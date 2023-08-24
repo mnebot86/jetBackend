@@ -71,7 +71,7 @@ export const getFeedPosts = async (req, res) => {
 		}
 
 		return res.status(StatusCodes.OK).json({
-			message: 'Successfully',
+			message: 'Successful',
 			data: {
 				feedPosts,
 				currentPage: page,
@@ -100,7 +100,10 @@ export const getFeedPost = async (req, res) => {
 		});
 	}
 
-	return res.status(StatusCodes.OK).json({ feedPost });
+	return res.status(StatusCodes.OK).json({ 
+		message: 'Successful',
+		data: { feedPost } 
+	});
 };
 
 export const updateFeedPost = async (req, res) => {
@@ -152,7 +155,7 @@ export const updateFeedPost = async (req, res) => {
 	await sendNotifications(allTokens, allUsersTitle, allUsersBody, 1);
 
 	return res.status(StatusCodes.OK).json({
-		message: 'Post Updated Successful',
+		message: 'Post Updated Successfully',
 		data: { feedPost },
 	});
 };

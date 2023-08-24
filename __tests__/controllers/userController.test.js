@@ -14,19 +14,18 @@ afterEach(async () => {
 	await mongoose.connection.close();
 });
 
-describe.skip('User route and controller', () => {
+describe('User route and controller', () => {
 	let USER_TOKEN;
-
+	
 	it('should register a user', async () => {
 		const res = await request(app).post('/api/v1/auth/register').send({
 			email: 'testing@gmail.com',
 			password: 'Testing1!',
-			confirmPassword: 'Testing1!',
-			role: 'COACH',
 		});
 
 		expect(res.statusCode).toBe(201);
-		expect(res.body.token).toBeDefined();
+		expect(res.body.data.token).toBeDefined();
+		expect(res.body.message).toBe('Player created successfully')
 	});
 
 	it('should login in user', async () => {
@@ -36,6 +35,7 @@ describe.skip('User route and controller', () => {
 		});
 
 		expect(res.statusCode).toBe(200);
+		expect(res.body.message).toBe('Login successfully');
 		expect(res.body.token).toBeDefined();
 
 		USER_TOKEN = res.body.token;
@@ -46,38 +46,42 @@ describe.skip('User route and controller', () => {
 
 		const res = await request(app)
 			.patch(`/api/v1/auth/users/${userId}`)
+			.set('Authorization', `Bearer ${USER_TOKEN}`)
 			.send({
 				email: 'testing!@gmail.com',
 			});
-
+		
 		expect(res.statusCode).toBe(200);
-		expect(res.body.email).toBe('testing!@gmail.com');
+		expect(res.body.data.email).toBe('testing!@gmail.com');
 	});
 
 	it('should get one user by id', async () => {
 		const { userId } = jwt.decode(USER_TOKEN);
 
-		const res = await request(app).get(`/api/v1/auth/users/${userId}`);
+		const res = await request(app).get(`/api/v1/auth/users/${userId}`).set('Authorization', `Bearer ${USER_TOKEN}`);
 
 		expect(res.statusCode).toBe(200);
-		expect(res.body).toBeDefined();
-		expect(res.body._id).toBe(userId);
+		expect(res.body.message).toBe('Successful')
+		expect(res.body.data).toBeDefined();
+		expect(res.body.data._id).toBe(userId);
 	});
 
 	it('should get all users', async () => {
-		const res = await request(app).get('/api/v1/auth/users');
+		const res = await request(app).get('/api/v1/auth/users').set('Authorization', `Bearer ${USER_TOKEN}`);
 
 		expect(res.statusCode).toBe(200);
 		expect(res.body.count).toBeGreaterThan(0);
+		expect(res.body.message).toBe('Successful');
+		expect(res.body.data).toBeDefined();
 	});
 
 	it('should delete user', async () => {
 		const { userId } = jwt.decode(USER_TOKEN);
 
-		const res = await request(app).delete(`/api/v1/auth/users/${userId}`);
+		const res = await request(app).delete(`/api/v1/auth/users/${userId}`).set('Authorization', `Bearer ${USER_TOKEN}`);;
 
 		expect(res.statusCode).toBe(200);
 		expect(res.body).toBeDefined();
-		expect(res.body.msg).toBe('Deleted!');
+		expect(res.body.message).toBe('Deleted!');
 	});
 });

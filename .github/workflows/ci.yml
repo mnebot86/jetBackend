@@ -1,28 +1,35 @@
 name: Jest Tests
 
 on:
-    pull_request:
-        branches:
-            - main
+  pull_request:
+    branches:
+      - main
 
 jobs:
-    test:
-        runs-on: ubuntu-latest
+  test:
+    runs-on: ubuntu-latest
 
-        steps:
-            - name: Checkout code
-              uses: actions/checkout@v2
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
 
-            - name: Set up Node.js
-              uses: actions/setup-node@v2
-              with:
-                  node-version: 16
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: 16
 
-            - name: Install dependencies
-              run: yarn install --frozen-lockfile
+      - name: Install dependencies
+        run: yarn install
 
-            - name: Run Jest tests
-              env:
-                  MONGO_URI: ${{ secrets.MONGO_URI }}
-                  TEST_TOKEN: ${{ secrets.TEST_TOKEN }}
-              run: yarn test
+      - name: Run Jest tests
+        env:
+           MONGO_URI: ${{ secrets.MONGO_URI }}
+           TEST_TOKEN: ${{ secrets.TEST_TOKEN }}
+           JWT_SECRET: ${{ secrets.JWT_SECRET }}
+           JWT_LIFETIME: ${{ secrets.JWT_LIFETIME}}
+           CLOUD_NAME: ${{ secrets.CLOUD_NAME }}
+           CLOUD_API_KEY: ${{ secrets.CLOUD_API_KEY }}
+           CLOUD_API_SECRET: ${{ secrets.CLOUD_API_SECRET }}
+           NODE_VERSION: ${{ secrets.NODE_VERSION }}
+           JET_ACCESS_TOKEN: ${{ secrets.JET_ACCESS_TOKEN }}
+        run: yarn test
