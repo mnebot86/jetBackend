@@ -7,10 +7,17 @@ const formationSchema = new mongoose.Schema(
 			required: [true, 'Please provide name'],
 		},
 		image: {
-			type: String,
-			required: [true, 'Please provided an image url']
+			url: String,
+			cloudinaryId: String
 		},
-		plays: [{ type: mongoose.Types.ObjectId, ref: 'Play' }],
+		plays: [{ 
+			type: mongoose.Types.ObjectId, 
+			ref: 'Play' 
+		}],
+		playbook: { 
+			type: mongoose.Types.ObjectId,
+			 ref: 'Playbook' 
+			}
 	},
 	{ timestamps: true }
 );

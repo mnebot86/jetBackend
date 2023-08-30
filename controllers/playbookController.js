@@ -56,13 +56,13 @@ export const createPlaybook = async (req, res) => {
 
 export const getPlaybooks = async (req, res) => {
 	try {
-		const Playbooks = await Playbook.find({});
+		const playbooks = await Playbook.find({});
 
-		if (!Playbooks || Playbooks.length === 0) {
+		if (!playbooks || playbooks.length === 0) {
 			return res.status(StatusCodes.OK).json({
 				message: 'No Playbooks Saved',
 				data: {
-					Playbooks: [],
+					playbooks: [],
 				},
 			});
 		}
@@ -70,7 +70,7 @@ export const getPlaybooks = async (req, res) => {
 		return res.status(StatusCodes.OK).json({
 			message: 'Successfully',
 			data: {
-				Playbooks,
+				playbooks,
 			},
 		});
 	} catch (error) {
@@ -87,8 +87,6 @@ export const getPlaybook = async (req, res) => {
 	} = req;
 
 	const playbook = await Playbook.findById(id);
-
-	console.log(playbook);
 
 	if (!playbook) {
 		return res.status(StatusCodes.NOT_FOUND).json({

@@ -1,19 +1,9 @@
 import express from 'express';
 import { createAvatar } from '../controllers/avatarController.js';
-import multer from 'multer';
 import { checkAuth } from '../middleware/authenticated.js';
+import { setupMulter } from '../utils/muter.js'
 
-const storage = multer.diskStorage({});
-
-const fileFilter = (req, file, cb) => {
-	if (file.mimetype.startsWith('image')) {
-		cb(null, true);
-	} else {
-		cb('invalid image file', false);
-	}
-};
-
-const uploads = multer({ storage, fileFilter });
+const uploads = setupMulter();
 
 const router = express.Router();
 

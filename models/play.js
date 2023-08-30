@@ -4,17 +4,18 @@ const playSchema = new mongoose.Schema(
 	{
 		name: {
 			type: String,
-			enum: ['Offense, Defense, Special Teams'],
 			required: [true, 'Please provide name'],
 		},
 		description: {
 			type: String,
 		},
 		image: {
-			type: String,
+			url: String,
+			cloudinaryId: String
 		},
-		image: {
-			type: string,
+		formation: {
+			type: mongoose.Types.ObjectId,
+			ref: 'Formation',
 		},
 	},
 	{ timestamps: true }

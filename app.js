@@ -17,6 +17,8 @@ import gameRouter from './routes/gameRouter.js';
 import avatarRouter from './routes/avatarRouter.js';
 import feedPostRouter from './routes/feedPostRouter.js';
 import playbookRouter from './routes/playBookRouter.js';
+import formationRouter from './routes/formationRouter.js';
+import playRouter from './routes/playRouter.js';
 
 // Middleware
 import {
@@ -52,6 +54,8 @@ app.use('/api/v1/games', gameRouter);
 app.use('/api/v1/avatar', avatarRouter);
 app.use('/api/v1/feedPosts', feedPostRouter);
 app.use('/api/v1/playbooks', playbookRouter);
+app.use('/api/v1/playbooks/:playbookId/formations', formationRouter);
+app.use('/api/v1/playbooks/:playbookId/formations/:formationId/plays', playRouter);
 
 app.use(notFoundMiddleware);
 app.use(errorHandlerMiddleware);

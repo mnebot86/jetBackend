@@ -1,14 +1,8 @@
-import dotenv from 'dotenv';
 import { StatusCodes } from 'http-status-codes';
 import { v2 as cloudinary } from 'cloudinary';
+import {initializeCloudinary} from '../utils/cloudinary.js'
 
-dotenv.config();
-
-cloudinary.config({
-	cloud_name: process.env.CLOUD_NAME,
-	api_key: process.env.CLOUD_API_KEY,
-	api_secret: process.env.CLOUD_API_SECRET,
-});
+initializeCloudinary();
 
 export const createAvatar = async (req, res) => {
 	try {
@@ -25,7 +19,7 @@ export const createAvatar = async (req, res) => {
 			url: result.secure_url,
 			cloudinaryId: userId,
 		});
-	} catch (error) {
-		console.log(error);
+	} catch(err) {
+		console.log(err);
 	}
 };
