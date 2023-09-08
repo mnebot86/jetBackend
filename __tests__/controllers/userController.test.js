@@ -25,7 +25,7 @@ describe('User route and controller', () => {
 
 		expect(res.statusCode).toBe(201);
 		expect(res.body.data.token).toBeDefined();
-		expect(res.body.message).toBe('Player created successfully')
+		expect(res.body.message).toBe('Player created successfully');
 	});
 
 	it('should login in user', async () => {
@@ -61,7 +61,7 @@ describe('User route and controller', () => {
 		const res = await request(app).get(`/api/v1/auth/users/${userId}`).set('Authorization', `Bearer ${USER_TOKEN}`);
 
 		expect(res.statusCode).toBe(200);
-		expect(res.body.message).toBe('Successful')
+		expect(res.body.message).toBe('Successful');
 		expect(res.body.data).toBeDefined();
 		expect(res.body.data._id).toBe(userId);
 	});
@@ -78,7 +78,7 @@ describe('User route and controller', () => {
 	it('should delete user', async () => {
 		const { userId } = jwt.decode(USER_TOKEN);
 
-		const res = await request(app).delete(`/api/v1/auth/users/${userId}`).set('Authorization', `Bearer ${USER_TOKEN}`);;
+		const res = await request(app).delete(`/api/v1/auth/users/${userId}`).set('Authorization', `Bearer ${USER_TOKEN}`);
 
 		expect(res.statusCode).toBe(200);
 		expect(res.body).toBeDefined();

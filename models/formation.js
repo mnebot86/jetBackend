@@ -8,16 +8,16 @@ const formationSchema = new mongoose.Schema(
 		},
 		image: {
 			url: String,
-			cloudinaryId: String
+			cloudinaryId: String,
 		},
 		plays: [{ 
 			type: mongoose.Types.ObjectId, 
-			ref: 'Play' 
+			ref: 'Play', 
 		}],
 		playbook: { 
 			type: mongoose.Types.ObjectId,
-			 ref: 'Playbook' 
-			}
+			ref: 'Playbook', 
+		},
 	},
 	{ timestamps: true }
 );

@@ -3,12 +3,12 @@ import Playbook from '../models/playbook.js';
 import { StatusCodes } from 'http-status-codes';
 import Joi from 'joi';
 import { v2 as cloudinary } from 'cloudinary';
-import {initializeCloudinary} from '../utils/cloudinary.js'
+import { initializeCloudinary } from '../utils/cloudinary.js';
 
 initializeCloudinary();
 
 export const createFormation = async (req, res) => {
-	const { params: { playbookId }} = req;
+	const { params: { playbookId } } = req;
 
 	const schema = createFormationSchema(req.body);
 
@@ -32,10 +32,10 @@ export const createFormation = async (req, res) => {
 		
 		const formation = await Formation.create({ 
 			...req.body, 
-			playbook: playbookId
-		 });
+			playbook: playbookId,
+		});
 
-		if (!!req.file) {
+		if (req.file) {
 			const result = await cloudinary.uploader.upload(req.file.path, {
 				public_id: `formation/${formation._doc._id}`,
 				width: 500,
@@ -45,7 +45,7 @@ export const createFormation = async (req, res) => {
 
 			formation.image = {
 				url: result.secure_url,
-				cloudinaryId: formation._doc._id
+				cloudinaryId: formation._doc._id,
 			};
 
 			await formation.save();
@@ -73,14 +73,14 @@ export const createFormation = async (req, res) => {
 };
 
 export const getAllFormations = async (req, res) => {
-	const { params: { playbookId }} = req;
+	const { params: { playbookId } } = req;
 
 	try {
 		const formations = await Formation.find({ playbook: playbookId });
 
 		if (!formations) {
 			return res.status(StatusCodes.NOT_FOUND).json({
-				error: `No Formation with ID ${id} found`,
+				error: 'No Formationfound',
 			});
 		}
 
@@ -98,7 +98,7 @@ export const getAllFormations = async (req, res) => {
 };
 
 export const getFormation = async (req, res) => {
-	const { params: { id }} = req;
+	const { params: { id } } = req;
 
 	try {
 		const formation = await Formation.findById(id);
@@ -108,13 +108,13 @@ export const getFormation = async (req, res) => {
 				message: 'Formation Not Found',
 				data: {},
 			});
-		};
+		}
 
 		return res.status(StatusCodes.OK).json({
 			message: 'Success',
 			data: {
-				formation
-			}
+				formation,
+			},
 		});
 	} catch (err) {
 		console.error(err);
@@ -123,7 +123,7 @@ export const getFormation = async (req, res) => {
 			error: 'An unexpected error occurred',
 		});
 	}
-}
+};
 
 export const updateFormation = async (req, res) => {
 	const { params: { id } } = req;
@@ -142,7 +142,7 @@ export const updateFormation = async (req, res) => {
 			});
 		}
 		
-		if (!!req.file) {
+		if (req.file) {
 			const result = await cloudinary.uploader.upload(req.file.path, {
 				public_id: `formation/${formation._doc._id}`,
 				width: 500,
@@ -152,7 +152,7 @@ export const updateFormation = async (req, res) => {
 
 			formation.image = {
 				url: result.secure_url,
-				cloudinaryId: formation._doc._id
+				cloudinaryId: formation._doc._id,
 			};
 
 			await formation.save();
@@ -160,8 +160,8 @@ export const updateFormation = async (req, res) => {
 
 		return res.status(StatusCodes.OK).json({
 			message: 'Successfully Updated',
-			data: { formation }
-		})
+			data: { formation },
+		});
 	} catch(err) {
 		console.error(err);
 
@@ -188,21 +188,21 @@ export const deleteFormation = async (req, res) => {
 			playbookId,
 			{ $pull: { formations: id } },
 			{ new: true }
-		)
+		);
 
 		const public_id = `formation/${id}`;
 
 		await cloudinary.uploader.destroy(public_id, (error, result) => {
 			if (error) {
-			  console.error('Error deleting image:', error);
+				console.error('Error deleting image:', error);
 			} else {
-			  console.log('Image deleted:', result);
+				console.log('Image deleted:', result);
 			}
-		  });
+		});
 
 		return res.status(StatusCodes.OK).json({
 			message: 'Successfully Delete',
-			data: { formation }
+			data: { formation },
 		});
 	} catch(err) {
 		console.error(err);
@@ -213,7 +213,7 @@ export const deleteFormation = async (req, res) => {
 	}
 };
 
-const createFormationSchema = (requestBody) => {
+const createFormationSchema = requestBody => {
 	const schema = Joi.object({
 		name: Joi.string().required(),
 	});

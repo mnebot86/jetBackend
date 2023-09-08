@@ -33,7 +33,7 @@ const userSchema = new mongoose.Schema(
 			required: [true, 'Password is required'],
 			select: false,
 			validate: {
-				validator: (password) => {
+				validator: password => {
 					return /^(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,}$/.test(
 						password
 					);

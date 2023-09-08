@@ -2,7 +2,6 @@ import request from 'supertest';
 import app from '../../app.js';
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
-import { mongoConnect } from '../../db/connection.js';
 
 dotenv.config();
 

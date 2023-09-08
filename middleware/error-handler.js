@@ -1,6 +1,6 @@
 import { StatusCodes } from 'http-status-codes';
 
-const errorHandlerMiddleware = (err, req, res, next) => {
+const errorHandlerMiddleware = (err, req, res) => {
 	const defaultError = {
 		statusCode: err.statusCode || StatusCodes.INTERNAL_SERVER_ERROR,
 		msg: err.message || 'Something went wrong, try again later',
@@ -10,7 +10,7 @@ const errorHandlerMiddleware = (err, req, res, next) => {
 		defaultError.statusCode = StatusCodes.BAD_REQUEST;
 
 		defaultError.msg = Object.values(err.errors)
-			.map((item) => item.message)
+			.map(item => item.message)
 			.join(', ');
 	}
 

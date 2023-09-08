@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 
-export const mongoConnect = async (uri) => {
+export const mongoConnect = async uri => {
 	try {
 		await mongoose.connect(uri);
 	} catch (error) {

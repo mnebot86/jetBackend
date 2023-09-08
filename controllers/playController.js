@@ -3,12 +3,12 @@ import Formation from '../models/formation.js';
 import { StatusCodes } from 'http-status-codes';
 import Joi from 'joi';
 import { v2 as cloudinary } from 'cloudinary';
-import {initializeCloudinary} from '../utils/cloudinary.js'
+import { initializeCloudinary } from '../utils/cloudinary.js';
 
 initializeCloudinary();
 
 export const createPlay = async (req, res) => {
-    const { params: { formationId } } = req;
+	const { params: { formationId } } = req;
 
 	const schema = PlaySchema(req.body);
 
@@ -32,7 +32,7 @@ export const createPlay = async (req, res) => {
 
 		const play = await Play.create({
 			...req.body,
-            formation: formationId,
+			formation: formationId,
 		});
 
 		await Formation.findByIdAndUpdate(
@@ -41,7 +41,7 @@ export const createPlay = async (req, res) => {
 			{ new: true }
 		);
 		
-		if (!!req.file) {
+		if (req.file) {
 			const result = await cloudinary.uploader.upload(req.file.path, {
 				public_id: `play/${play._doc._id}`,
 				width: 500,
@@ -51,7 +51,7 @@ export const createPlay = async (req, res) => {
 
 			play.image = {
 				url: result.secure_url,
-				cloudinaryId: play._doc._id
+				cloudinaryId: play._doc._id,
 			};
 
 			await play.save();
@@ -78,11 +78,11 @@ export const getAllPlays = async (req, res) => {
 	} = req;
 
 	try {
-		const plays = await Play.find({formation: formationId});
+		const plays = await Play.find({ formation: formationId });
 
 		if (!plays) {
 			return res.status(StatusCodes.NOT_FOUND).json({
-				error: `No plays found`,
+				error: 'No plays found',
 			});
 		}
 
@@ -111,7 +111,7 @@ export const getPlay = async (req, res) => {
 
 		if (!play) {
 			return res.status(StatusCodes.NOT_FOUND).json({
-				error: `No play by that id`,
+				error: 'No play by that id',
 			});
 		}
 
@@ -137,16 +137,16 @@ export const updatePlay = async (req, res) => {
 		const play = await Play.findByIdAndUpdate(
 			id,
 			req.body,
-			{new: true},
+			{ new: true },
 		);
 
 		if(!play) {
 			return res.status(StatusCodes.NOT_FOUND).json({
-				error: `No play by that id`,
+				error: 'No play by that id',
 			});
 		}
 
-		if (!!req.file) {
+		if (req.file) {
 			const result = await cloudinary.uploader.upload(req.file.path, {
 				public_id: `play/${play._doc._id}`,
 				width: 500,
@@ -156,7 +156,7 @@ export const updatePlay = async (req, res) => {
 
 			play.image = {
 				url: result.secure_url,
-				cloudinaryId: play._doc._id
+				cloudinaryId: play._doc._id,
 			};
 
 			await play.save();
@@ -184,30 +184,30 @@ export const deletePlay = async (req, res) => {
 		const play = await Play.findByIdAndDelete(
 			id,
 			req.body,
-			{new: true},
+			{ new: true },
 		);
 
 		if(!play) {
 			return res.status(StatusCodes.NOT_FOUND).json({
-				error: `No play by that id`,
+				error: 'No play by that id',
 			});
 		}
 
 		await Formation.findByIdAndUpdate(
 			formationId,
-			{$pull: { plays: play._doc._id }},
-			{new: true},
+			{ $pull: { plays: play._doc._id } },
+			{ new: true },
 		);
 
 		const public_id = `play/${id}`;
 
 		await cloudinary.uploader.destroy(public_id, (error, result) => {
 			if (error) {
-			  console.error('Error deleting image:', error);
+				console.error('Error deleting image:', error);
 			} else {
-			  console.log('Image deleted:', result);
+				console.log('Image deleted:', result);
 			}
-		  });
+		});
 
 		return res.status(StatusCodes.OK).json({
 			message: 'Success',
@@ -224,7 +224,7 @@ export const deletePlay = async (req, res) => {
 	}
 };
 
-const PlaySchema = (requestBody) => {
+const PlaySchema = requestBody => {
 	const schema = Joi.object({
 		name: Joi.string().required(),
 		description: Joi.string().required(),

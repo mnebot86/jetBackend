@@ -1,7 +1,7 @@
 import express from 'express';
 import { createPlay, getAllPlays, getPlay, updatePlay, deletePlay } from '../controllers/playController.js';
 import { checkAuth } from '../middleware/authenticated.js';
-import { setupMulter } from '../utils/muter.js'
+import { setupMulter } from '../utils/muter.js';
 
 const router = express.Router({ mergeParams: true });
 

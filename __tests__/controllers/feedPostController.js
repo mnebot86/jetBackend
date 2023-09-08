@@ -11,12 +11,12 @@ beforeEach(async () => {
 	await mongoose.connect(process.env.MONGO_URI);
 
 	const res = await request(app).post('/api/v1/auth/login').send({
-        email: 'testaccount@gmail.com',
-        password: 'Testing1!',
-    });
+		email: 'testaccount@gmail.com',
+		password: 'Testing1!',
+	});
 
-	console.log("RES", res.body);
-    USER_TOKEN = res.body.token
+	console.log('RES', res.body);
+	USER_TOKEN = res.body.token;
 });
 
 afterEach(async () => {
@@ -28,23 +28,23 @@ describe.skip('Feed Post route and controller', () => {
 
 	it('should create feed post', async () => {
 		const res = await request(app).post('/api/v1/feedPosts')
-        .set('Authorization', `Bearer ${USER_TOKEN}`)
-        .send({
-			message: 'Controller Test',
-			group: 'ADMIN',
-		});
+			.set('Authorization', `Bearer ${USER_TOKEN}`)
+			.send({
+				message: 'Controller Test',
+				group: 'ADMIN',
+			});
 
 		expect(res.statusCode).toBe(201);
-		expect(res.body.message).toBe('Feed Post created successfully!')
+		expect(res.body.message).toBe('Feed Post created successfully!');
 		expect(res.body.data.feedPost).toBeDefined();
 		expect(res.body.data.feedPost.message).toBe('Controller Test');
 
-        POST_ID = res.body.data.feedPost._id;
+		POST_ID = res.body.data.feedPost._id;
 	});
 
 	it('should get all feed posts', async () => {
 		const res = await request(app).get('/api/v1/feedPosts')
-        .set('Authorization', `Bearer ${USER_TOKEN}`);
+			.set('Authorization', `Bearer ${USER_TOKEN}`);
 
 		expect(res.statusCode).toBe(200);
 		expect(res.body.message).toBe('Successful');
@@ -56,7 +56,7 @@ describe.skip('Feed Post route and controller', () => {
 	it('should get feed post by id', async () => {
 		const res = await request(app)
 			.get(`/api/v1/feedPosts/${POST_ID}`)
-			.set('Authorization', `Bearer ${USER_TOKEN}`)
+			.set('Authorization', `Bearer ${USER_TOKEN}`);
 			
 		expect(res.statusCode).toBe(200);
 		expect(res.body.data).toBeDefined();
@@ -66,11 +66,11 @@ describe.skip('Feed Post route and controller', () => {
 
 	it('should updated feed post', async () => {
 		const res = await request(app).patch(`/api/v1/feedPosts/${POST_ID}`).set('Authorization', `Bearer ${USER_TOKEN}`).send({
-            message: 'Update Post Controller',
-        });;
+			message: 'Update Post Controller',
+		});
 
 		expect(res.statusCode).toBe(200);
-		expect(res.body.message).toBe('Post Updated Successfully')
+		expect(res.body.message).toBe('Post Updated Successfully');
 		expect(res.body.data).toBeDefined();
 		expect(res.body.data.feedPost._id).toBe(POST_ID);
 		expect(res.body.data.feedPost.message).toBe('Update Post Controller');

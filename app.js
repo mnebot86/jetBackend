@@ -12,7 +12,6 @@ import { mongoConnect } from './db/connection.js';
 import userRouter from './routes/userRouter.js';
 import playerRouter from './routes/playerRouter.js';
 import groupRouter from './routes/groupRouter.js';
-import requestRouter from './routes/requestRouter.js';
 import gameRouter from './routes/gameRouter.js';
 import avatarRouter from './routes/avatarRouter.js';
 import feedPostRouter from './routes/feedPostRouter.js';
@@ -49,7 +48,6 @@ app.get('/api/v1', (req, res) => {
 app.use('/api/v1/auth', userRouter);
 app.use('/api/v1/groups', groupRouter);
 app.use('/api/v1/players', playerRouter);
-app.use('/api/v1/requests', requestRouter);
 app.use('/api/v1/games', gameRouter);
 app.use('/api/v1/avatar', avatarRouter);
 app.use('/api/v1/feedPosts', feedPostRouter);
@@ -62,10 +60,10 @@ app.use(errorHandlerMiddleware);
 
 mongoConnect(mongoUri);
 
-io.on('connection', (socket) => {
+io.on('connection', socket => {
 	console.log('A User connected');
 
-	socket.on('new_feed', (feedPost) => {
+	socket.on('new_feed', feedPost => {
 		console.log('New feed post received:', feedPost);
 	});
 

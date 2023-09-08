@@ -184,7 +184,7 @@ export const deletePlaybook = async (req, res) => {
 	});
 };
 
-const createPlaybookSchema = (requestBody) => {
+const createPlaybookSchema = requestBody => {
 	const schema = Joi.object({
 		name: Joi.string().required(),
 		formations: Joi.array(),

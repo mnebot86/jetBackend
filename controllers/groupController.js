@@ -122,7 +122,7 @@ export const deleteGroup = async (req, res) => {
 	});
 };
 
-const createGroupSchema = (requestBody) => {
+const createGroupSchema = requestBody => {
 	const schema = Joi.object({
 		name: Joi.string().required(),
 		maxAge: Joi.number().required(),
@@ -132,7 +132,7 @@ const createGroupSchema = (requestBody) => {
 	return schema.validate(requestBody);
 };
 
-const getGroupORDeleteSchema = (requestParams) => {
+const getGroupORDeleteSchema = requestParams => {
 	const schema = Joi.object({
 		id: Joi.string().required(),
 	});

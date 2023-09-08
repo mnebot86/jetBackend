@@ -1,6 +1,6 @@
 import { StatusCodes } from 'http-status-codes';
 import { v2 as cloudinary } from 'cloudinary';
-import {initializeCloudinary} from '../utils/cloudinary.js'
+import { initializeCloudinary } from '../utils/cloudinary.js';
 
 initializeCloudinary();
 

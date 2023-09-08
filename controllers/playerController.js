@@ -111,7 +111,7 @@ export const getPlayer = async (req, res) => {
 	}
 };
 
-const addPlayerSchema = (requestBody) => {
+const addPlayerSchema = requestBody => {
 	const schema = Joi.object({
 		firstName: Joi.string().required(),
 		lastName: Joi.string().required(),
@@ -136,7 +136,7 @@ const addPlayerSchema = (requestBody) => {
 	return schema.validate(requestBody);
 };
 
-const getPlayerSchema = (requestBody) => {
+const getPlayerSchema = requestBody => {
 	const schema = Joi.object({
 		id: Joi.string().required(),
 	});

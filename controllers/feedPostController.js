@@ -65,7 +65,7 @@ export const getFeedPosts = async (req, res) => {
 				data: {
 					feedPost: [],
 					currentPage: page,
-					totalPages: Match.ceil(totalPosts / perPage),
+					totalPages: Math.ceil(totalPosts / perPage),
 				},
 			});
 		}
@@ -102,7 +102,7 @@ export const getFeedPost = async (req, res) => {
 
 	return res.status(StatusCodes.OK).json({ 
 		message: 'Successful',
-		data: { feedPost } 
+		data: { feedPost }, 
 	});
 };
 
@@ -184,7 +184,7 @@ export const deleteFeedPost = async (req, res) => {
 	});
 };
 
-const createFeedPostSchema = (requestBody) => {
+const createFeedPostSchema = requestBody => {
 	const schema = Joi.object({
 		message: Joi.string().required(),
 		group: Joi.string().required(),

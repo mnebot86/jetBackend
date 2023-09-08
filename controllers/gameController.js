@@ -40,7 +40,7 @@ export const createGame = async (req, res) => {
 	if (gameAlreadyExist) {
 		return res
 			.status(StatusCodes.BAD_REQUEST)
-			.json({ error: `This game already exist!` });
+			.json({ error: 'This game already exist!' });
 	}
 
 	const game = await Game.create({

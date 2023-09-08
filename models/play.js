@@ -11,7 +11,7 @@ const playSchema = new mongoose.Schema(
 		},
 		image: {
 			url: String,
-			cloudinaryId: String
+			cloudinaryId: String,
 		},
 		formation: {
 			type: mongoose.Types.ObjectId,

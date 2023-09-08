@@ -111,6 +111,7 @@ export const verifyUser = async (req, res) => {
 		}
 	} catch (error) {
 		console.error('Error verifying user:', error);
+
 		return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
 			error: 'An error occurred while verifying the user',
 		});
@@ -166,7 +167,7 @@ export const deleteUser = async (req, res) => {
 	return res.status(StatusCodes.OK).json({ message: 'Deleted!' });
 };
 
-const registerSchema = (requestBody) => {
+const registerSchema = requestBody => {
 	const schema = Joi.object({
 		// role: Joi.string().required(),
 		email: Joi.string().email().required(),
@@ -184,7 +185,7 @@ const registerSchema = (requestBody) => {
 	return schema.validate(requestBody);
 };
 
-const loginSchema = (requestBody) => {
+const loginSchema = requestBody => {
 	const schema = Joi.object({
 		email: Joi.string().email().required(),
 		password: Joi.string().required(),
