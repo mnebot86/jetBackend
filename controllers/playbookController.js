@@ -20,7 +20,7 @@ export const createPlaybook = async (req, res) => {
 
 	if (alreadyExist) {
 		return res.status(StatusCodes.BAD_REQUEST).json({
-			message: 'Playbook already exist',
+			error: 'Playbook already exist',
 			data: {},
 		});
 	}
@@ -90,7 +90,7 @@ export const getPlaybook = async (req, res) => {
 
 	if (!playbook) {
 		return res.status(StatusCodes.NOT_FOUND).json({
-			message: 'Post not found',
+			error: 'Post not found',
 			data: {},
 		});
 	}
@@ -113,7 +113,7 @@ export const updatePlaybook = async (req, res) => {
 
 	if (!playbook) {
 		return res.status(StatusCodes.NOT_FOUND).json({
-			message: 'Playbook not found',
+			error: 'Playbook not found',
 			data: {},
 		});
 	}
@@ -126,7 +126,7 @@ export const updatePlaybook = async (req, res) => {
 
 	if (!user) {
 		return res.status(StatusCodes.NOT_FOUND).json({
-			message: 'User not found',
+			error: 'User not found',
 			data: {},
 		});
 	}
