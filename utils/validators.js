@@ -1,28 +1,34 @@
-const CHECK_LENGTH = /.{8,}/;
-const CHECK_CASE = /(?=.*[A-Z])/;
-const CHECK_NUMBER = /.*\d.*/;
-const CHECK_SYMBOL = /^(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,}$/;
+import createHttpError from 'http-errors';
+import { StatusCodes } from 'http-status-codes';
 
 export const passwordValidation = password => {
-	const errors = [];
-
-	if (!CHECK_LENGTH.test(password)) {
-		errors.push('Password should be at least 8 characters long');
+	const hasUppercase = /[A-Z]/.test(password);
+	const hasDigit = /\d/.test(password);
+	const hasSymbol = /[!@#$%^&*]/.test(password);
+	const isLengthValid = password.length >= 8;
+  
+	if (!hasUppercase) {
+		throw createHttpError(StatusCodes.BAD_REQUEST, 'Must contain at least one uppercase letter.');
 	}
-
-	if (!CHECK_CASE.test(password)) {
-		errors.push('Password should have at least one uppercase letter');
+  
+	if (!hasDigit) {
+		throw createHttpError(StatusCodes.BAD_REQUEST, 'Must contain at least one digit.');
 	}
-
-	if (!CHECK_NUMBER.test(password)) {
-		errors.push('Password should have at least one number');
+  
+	if (!hasSymbol) {
+		throw createHttpError(StatusCodes.BAD_REQUEST, 'Must contain at least one symbol (!@#$%^&*).');
 	}
-
-	if (!CHECK_SYMBOL.test(password)) {
-		errors.push(
-			'Password should have at least one symbol: example !@#$%^&*'
-		);
+  
+	if (!isLengthValid) {
+		throw createHttpError(StatusCodes.BAD_REQUEST, 'Must be at least 8 characters long.');
 	}
+};
 
-	return errors;
+export const isEmailValid = email => {
+	const emailRegex = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i;
+	const isValid = emailRegex.test(email);
+
+	if (!isValid) {
+		throw createHttpError(StatusCodes.BAD_REQUEST, 'Provide a valid email.');
+	}
 };

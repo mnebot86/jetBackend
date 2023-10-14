@@ -1,12 +1,13 @@
 import express from 'express';
-import { requireAuth } from '../middleware/checkAuth.js';
 import * as UserController from '../controllers/userController.js';
+import { requireAuth } from '../middleware/checkAuth.js';
 
 const router = express.Router();
 
 router.route('/').get(requireAuth, UserController.getAuthenticatedUser);
 router.route('/register').post(UserController.register);
 router.route('/login').post(UserController.login);
+router.route('/logout').post(UserController.logout);
 router.route('/users').get(requireAuth, UserController.getUsers);
 router
 	.route('/users/:id')

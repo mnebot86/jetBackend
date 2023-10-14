@@ -2,6 +2,7 @@ import bcrypt from 'bcryptjs';
 import createHttpError from 'http-errors';
 import { StatusCodes } from 'http-status-codes';
 import UserModel from '../models/user.js';
+import { isEmailValid, passwordValidation } from '../utils/validators.js';
 
 export const getAuthenticatedUser = async (req, res, next) => {
 	try {
@@ -21,10 +22,14 @@ export const register = async (req, res, next) => {
 			throw createHttpError(StatusCodes.BAD_REQUEST, 'Parameters missing');
 		}
 
-		const userAlreadyExists = await UserModel.findOne({ email });
+		isEmailValid(email);
 
+		passwordValidation(password);
+
+		const userAlreadyExists = await UserModel.findOne({ email });
+		
 		if (userAlreadyExists) {
-			throw createHttpError(StatusCodes.CONFLICT, 'Email already taken. Please choose a different one or login instead.');
+			throw createHttpError(StatusCodes.CONFLICT, 'Email already taken.');
 		}
 
 		const passwordHashed = await bcrypt.hash(password, 10);
@@ -49,7 +54,7 @@ export const login = async (req, res, next) => {
 		if (!email || !password) {
 			throw createHttpError(StatusCodes.BAD_REQUEST, 'Parameters missing');
 		}
-
+		
 		const user = await UserModel.findOne({ email }).select('+password').exec();
 
 		if (!user) {
@@ -59,14 +64,12 @@ export const login = async (req, res, next) => {
 		const isPasswordCorrect = await user.comparePassword(password);
 
 		if (!isPasswordCorrect) {
-			return res.json({ error: 'Invalid Credentials' });
+			throw createHttpError(StatusCodes.UNAUTHORIZED, 'Invalid Credentials');
 		}
-
-		const sanitizedUser = { ...user._doc, password: null };
 		
 		req.session.userId = user._id;
 
-		res.status(StatusCodes.OK).json(sanitizedUser);
+		res.status(StatusCodes.OK).json({ ...user._doc, password: null });
 	} catch (error) {
 		next(error);
 	}

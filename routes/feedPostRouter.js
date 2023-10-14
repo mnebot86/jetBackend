@@ -1,5 +1,5 @@
 import express from 'express';
-import { checkAuth } from '../middleware/authenticated.js';
+import { requireAuth } from '../middleware/checkAuth.js';
 
 import {
 	createFeedPost,
@@ -11,11 +11,11 @@ import {
 
 const router = express.Router();
 
-router.route('/').post(checkAuth, createFeedPost).get(checkAuth, getFeedPosts);
+router.route('/').post(requireAuth, createFeedPost).get(requireAuth, getFeedPosts);
 router
 	.route('/:id')
-	.get(checkAuth, getFeedPost)
-	.delete(checkAuth, deleteFeedPost)
-	.patch(checkAuth, updateFeedPost);
+	.get(requireAuth, getFeedPost)
+	.delete(requireAuth, deleteFeedPost)
+	.patch(requireAuth, updateFeedPost);
 
 export default router;
