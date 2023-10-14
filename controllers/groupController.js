@@ -1,6 +1,6 @@
 import Group from '../models/group.js';
 import { StatusCodes } from 'http-status-codes';
-import { BadRequestError } from '../errors/index.js';
+// import { BadRequestError } from '../errors/index.js';
 import Joi from 'joi';
 
 export const createGroup = async (req, res) => {
@@ -19,9 +19,9 @@ export const createGroup = async (req, res) => {
 	if (groupAlreadyExist) {
 		res.json({ error: `A group with the name ${name} already exist!` });
 
-		throw new BadRequestError({
-			error: `A group with the name ${name} already exist!`,
-		});
+		// throw new BadRequestError({
+		// 	error: `A group with the name ${name} already exist!`,
+		// });
 	}
 
 	const group = await Group.create({

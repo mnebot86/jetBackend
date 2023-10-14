@@ -1,195 +1,157 @@
-import User from '../models/user.js';
+import bcrypt from 'bcryptjs';
+import createHttpError from 'http-errors';
 import { StatusCodes } from 'http-status-codes';
-import Joi from 'joi';
+import UserModel from '../models/user.js';
 
-export const register = async (req, res) => {
-	const schema = registerSchema(req.body);
+export const getAuthenticatedUser = async (req, res, next) => {
+	try {
+		const user = await UserModel.findById(req.session.userId).exec();
 
-	if (schema.error) {
-		return res.status(StatusCodes.BAD_REQUEST).json({
-			error: schema.error.details[0].message,
-		});
+		res.status(StatusCodes.OK).json(user);
+	} catch (error) {
+		next(error);
 	}
-
-	const { email, role, password } = req.body;
-
-	const userAlreadyExists = await User.findOne({ email: req.body.email });
-
-	if (userAlreadyExists) {
-		return res.status(StatusCodes.BAD_REQUEST).json({
-			error: '"Email" already in use',
-			field: 'email',
-		});
-	}
-
-	const user = await User.create({
-		role,
-		email,
-		password,
-	});
-
-	const token = user.createJWT();
-
-	return res.status(StatusCodes.CREATED).json({
-		message: 'Player created successfully',
-		data: {
-			token,
-		},
-	});
 };
 
-export const login = async (req, res) => {
-	const schema = loginSchema(req.body);
-
-	if (schema.error) {
-		return res.status(StatusCodes.BAD_REQUEST).json({
-			error: schema.error.details[0].message,
-		});
-	}
-
+export const register = async (req, res, next) => {
 	const { email, password } = req.body;
 
-	const user = await User.findOne({ email }).select('+password');
-
-	if (!user) {
-		return res.json({ error: 'Invalid Credentials' });
-	}
-
-	const isPasswordCorrect = await user.comparePassword(password);
-
-	if (!isPasswordCorrect) {
-		return res.json({ error: 'Invalid Credentials' });
-	}
-
-	const token = user.createJWT();
-
-	user.password = undefined;
-
-	res.status(StatusCodes.OK).json({
-		message: 'Login successfully',
-		token,
-	});
-};
-
-export const updateUser = async (req, res) => {
-	const { id } = req.params;
-
-	if (!id) {
-		return res.json({ error: 'Please provide user id' });
-	}
-
-	const user = await User.findByIdAndUpdate(id, req.body, { new: true });
-
-	return res.status(StatusCodes.OK).json({
-		message: 'Updated Successful',
-		data: { ...user._doc },
-	});
-};
-
-export const verifyUser = async (req, res) => {
 	try {
-		const { userId } = req;
-
-		if (userId) {
-			const user = await User.findOne({ _id: userId }).populate({
-				path: 'players',
-				populate: [{ path: 'avatar' }, { path: 'group' }],
-			});
-
-			if (!user) {
-				return res
-					.status(StatusCodes.NOT_FOUND)
-					.json({ error: `No user with id ${userId}` });
-			}
-
-			return res.status(StatusCodes.OK).json({
-				message: 'Verification Successful',
-				data: {
-					...user._doc,
-				},
-			});
+		if (!email || !password) {
+			throw createHttpError(StatusCodes.BAD_REQUEST, 'Parameters missing');
 		}
-	} catch (error) {
-		console.error('Error verifying user:', error);
 
-		return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-			error: 'An error occurred while verifying the user',
+		const userAlreadyExists = await UserModel.findOne({ email });
+
+		if (userAlreadyExists) {
+			throw createHttpError(StatusCodes.CONFLICT, 'Email already taken. Please choose a different one or login instead.');
+		}
+
+		const passwordHashed = await bcrypt.hash(password, 10);
+
+		const newUser = await UserModel.create({
+			email,
+			password: passwordHashed,
 		});
+
+		req.session.userId = newUser._id;
+
+		res.status(StatusCodes.CREATED).json({ ...newUser._doc, password: null });
+	} catch (error) {
+		next(error);
 	}
 };
 
-export const getUser = async (req, res) => {
+export const login = async (req, res, next) => {
+	const { email, password } = req.body;
+
+	try {
+		if (!email || !password) {
+			throw createHttpError(StatusCodes.BAD_REQUEST, 'Parameters missing');
+		}
+
+		const user = await UserModel.findOne({ email }).select('+password').exec();
+
+		if (!user) {
+			return createHttpError(StatusCodes.UNAUTHORIZED, 'Invalid Credentials');
+		}
+		
+		const isPasswordCorrect = await user.comparePassword(password);
+
+		if (!isPasswordCorrect) {
+			return res.json({ error: 'Invalid Credentials' });
+		}
+
+		const sanitizedUser = { ...user._doc, password: null };
+		
+		req.session.userId = user._id;
+
+		res.status(StatusCodes.OK).json(sanitizedUser);
+	} catch (error) {
+		next(error);
+	}
+};
+
+export const logout = (req, res, next) => {
+	req.session.destroy(error => {
+		if (error) {
+			next(error);
+		} else {
+			res.sendStatus(200);
+		}
+	});
+};
+
+export const updateUser = async (req, res, next) => {
 	const { id } = req.params;
 
-	if (!id) {
-		return res
-			.status(StatusCodes.BAD_REQUEST)
-			.json({ error: 'Provide user id' });
+	try {
+		if (!id) {
+			throw createHttpError(StatusCodes.BAD_REQUEST, 'Please provide user id');
+		}
+	
+		const user = await UserModel.findByIdAndUpdate(id, req.body, { new: true });
+		
+		if (!user) {
+			throw createHttpError(StatusCodes.NOT_FOUND, `No user with ID: ${id} found!`);
+		}
+
+		return res.status(StatusCodes.OK).json(user);
+	} catch (error) {
+		next(error);
 	}
-
-	const user = await User.findOne({ _id: id });
-
-	if (!user) {
-		return res
-			.status(StatusCodes.NOT_FOUND)
-			.json({ error: 'No user found by that id' });
-	}
-
-	return res.status(StatusCodes.OK).json({
-		message: 'Successful',
-		data: { ...user._doc },
-	});
 };
 
-export const getUsers = async (req, res) => {
-	const users = await User.find({});
-
-	if (!users) {
-		res.status(StatusCodes.OK).json({ error: 'No users in the database' });
-	}
-
-	res.status(StatusCodes.OK).json({
-		message: 'Successful',
-		count: users.length,
-		data: { ...users },
-	});
-};
-
-export const deleteUser = async (req, res) => {
+export const getUser = async (req, res, next) => {
 	const { id } = req.params;
 
-	if (!id) {
-		return res.json({ error: 'Please provide user id' });
+	try {
+		if (!id) {
+			throw createHttpError(StatusCodes.BAD_REQUEST, 'User Id required');
+		}
+	
+		const user = await UserModel.findOne({ _id: id }).exec();
+	
+		if (!user) {
+			throw createHttpError(StatusCodes.NOT_FOUND, `User with Id: ${id} not found`);
+		}
+	
+		return res.status(StatusCodes.OK).json(user._doc);
+	} catch (error) {
+		next(error);
 	}
-
-	await User.findByIdAndDelete(id);
-
-	return res.status(StatusCodes.OK).json({ message: 'Deleted!' });
 };
 
-const registerSchema = requestBody => {
-	const schema = Joi.object({
-		// role: Joi.string().required(),
-		email: Joi.string().email().required(),
-		password: Joi.string()
-			.min(8)
-			.regex(/^(?=.*[A-Z])/)
-			.message('"Password" must contain at least one uppercase letter.')
-			.regex(/^(?=.*\d)/)
-			.message('"Password" must contain at least one digit.')
-			.regex(/^(?=.*[!@#$%^&*])/)
-			.message('"Password" must contain at least one special character.')
-			.required(),
-	});
+export const getUsers = async (req, res, next) => {
+	try {
+		const users = await UserModel.find({});
+		
+		if (!users) {
+			res.status(StatusCodes.OK).json({});
+		}
 
-	return schema.validate(requestBody);
+		res.status(StatusCodes.OK).json(users);
+	} catch (error) {
+		next(error);
+	}
 };
 
-const loginSchema = requestBody => {
-	const schema = Joi.object({
-		email: Joi.string().email().required(),
-		password: Joi.string().required(),
-	});
+export const deleteUser = async (req, res, next) => {
+	const { id } = req.params;
 
-	return schema.validate(requestBody);
+	try {
+		if (!id) {
+			throw createHttpError(StatusCodes.BAD_REQUEST, 'Please provide user id');
+		}
+
+		const user = await UserModel.findByIdAndDelete(id);
+
+		if (!user) {
+			throw createHttpError(StatusCodes.NOT_FOUND, `User with Id: ${user} not found`);
+		}
+
+		return res.sendStatus(StatusCodes.OK);
+	} catch (error) {
+		next(error);
+	}
 };

@@ -86,7 +86,7 @@ export const getPlaybook = async (req, res) => {
 		params: { id },
 	} = req;
 
-	const playbook = await Playbook.findById(id);
+	const playbook = await Playbook.findById(id).populate('formations');
 
 	if (!playbook) {
 		return res.status(StatusCodes.NOT_FOUND).json({

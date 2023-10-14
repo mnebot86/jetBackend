@@ -1,12 +1,12 @@
 import express from 'express';
-import dotenv from 'dotenv';
 import morgan from 'morgan';
+import dotenv from 'dotenv';
 import { Server } from 'socket.io';
+import { StatusCodes } from 'http-status-codes';
+import createHttpError, { isHttpError } from 'http-errors';
 import http from 'http';
-import 'express-async-errors';
-
-// db and authenticateUser
-import { mongoConnect } from './db/connection.js';
+import session from 'express-session';
+import MongoStore from 'connect-mongo';
 
 // routers
 import userRouter from './routes/userRouter.js';
@@ -19,12 +19,6 @@ import playbookRouter from './routes/playBookRouter.js';
 import formationRouter from './routes/formationRouter.js';
 import playRouter from './routes/playRouter.js';
 
-// Middleware
-import {
-	notFoundMiddleware,
-	errorHandlerMiddleware,
-} from './middleware/index.js';
-
 dotenv.config();
 
 // Constants
@@ -32,13 +26,24 @@ const app = express();
 export const server = http.createServer(app);
 export const io = new Server(server);
 
-const mongoUri = process.env.MONGO_URI;
-
 if (process.env.NODE_ENV !== 'production') {
 	app.use(morgan('dev'));
 }
 
 app.use(express.json());
+
+app.use(session({
+	secret: process.env.SESSION_SECRET,
+	resave: false,
+	saveUninitialized: false,
+	cookie: {
+		maxAge: 60 * 60 * 1000,
+	},
+	rolling: true, 
+	store: MongoStore.create({
+		mongoUrl: process.env.MONGO_URI,
+	}),
+}));
 
 // Routes
 app.get('/api/v1', (req, res) => {
@@ -55,10 +60,24 @@ app.use('/api/v1/playbooks', playbookRouter);
 app.use('/api/v1/playbooks/:playbookId/formations', formationRouter);
 app.use('/api/v1/playbooks/:playbookId/formations/:formationId/plays', playRouter);
 
-app.use(notFoundMiddleware);
-app.use(errorHandlerMiddleware);
+app.use((req, res, next) => {
+	next(createHttpError(StatusCodes.NOT_FOUND, 'Endpoint not found'));
+});
 
-mongoConnect(mongoUri);
+// eslint-disable-next-line no-unused-vars
+app.use((error, req, res, next) => {
+	console.error(error);
+
+	let errorMessage = 'An unknown error occurred';
+	let statusCode = StatusCodes.INTERNAL_SERVER_ERROR;
+
+	if (isHttpError(error)) {
+		statusCode = error.status;
+		errorMessage = error.message;
+	}
+
+	res.status(statusCode).json({ error: errorMessage });
+});
 
 io.on('connection', socket => {
 	console.log('A User connected');

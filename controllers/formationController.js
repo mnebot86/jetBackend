@@ -8,6 +8,8 @@ import { initializeCloudinary } from '../utils/cloudinary.js';
 initializeCloudinary();
 
 export const createFormation = async (req, res) => {
+	console.log(req.file);
+	
 	const { params: { playbookId } } = req;
 
 	const schema = createFormationSchema(req.body);
@@ -38,9 +40,6 @@ export const createFormation = async (req, res) => {
 		if (req.file) {
 			const result = await cloudinary.uploader.upload(req.file.path, {
 				public_id: `formation/${formation._doc._id}`,
-				width: 500,
-				height: 500,
-				crop: 'fill',
 			});
 
 			formation.image = {
