@@ -23,7 +23,7 @@
 	"scripts": {
 		"start": "node dist/server.js",
 		"dev": "nodemon src/server.ts",
-		"build": "babel src -d dist",
+		"build": "yarn install && tsc",
 		"test": "jest --config=jest.config.ts --forceExit",
 		"seed": "node db/seed.js",
 		"lint": "eslint",
