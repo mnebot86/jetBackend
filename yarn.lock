@@ -22,7 +22,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/cli@npm:^7.21.0":
+"@babel/cli@npm:^7.23.0":
   version: 7.23.0
   resolution: "@babel/cli@npm:7.23.0"
   dependencies:
@@ -1510,10 +1510,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@faker-js/faker@npm:^7.6.0":
-  version: 7.6.0
-  resolution: "@faker-js/faker@npm:7.6.0"
-  checksum: 9236ee7a7ab32fcd99fa8cbc046b65b0af4fe714b12e33a39d3e058bef77e53bb0f42fe3331ed578a6db581b22c31f12ed2ba587a4bdb58a9ba0bb5b19f99bc4
+"@faker-js/faker@npm:^8.2.0":
+  version: 8.2.0
+  resolution: "@faker-js/faker@npm:8.2.0"
+  checksum: 8be9ce50538b12abdd9c2c94a9e23b991826b42f4706cb703f1d37cac8c9042d6549905959f3fd9abdd3a22f7b6095ddbae6f4269250158bd35a4ca1a5de55e8
   languageName: node
   linkType: hard
 
@@ -2313,6 +2313,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/uuid@npm:^9":
+  version: 9.0.6
+  resolution: "@types/uuid@npm:9.0.6"
+  checksum: 739dcb2e620ff097fa916edeab455eb75640c4883a850784fdb15b32f67b719e05275c6d6419bb6da11350d26bd14ed05ba5e992ff228411cdd98cbc772d71ef
+  languageName: node
+  linkType: hard
+
 "@types/webidl-conversions@npm:*":
   version: 7.0.1
   resolution: "@types/webidl-conversions@npm:7.0.1"
@@ -2994,6 +3001,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"bson@npm:^6.1.0":
+  version: 6.1.0
+  resolution: "bson@npm:6.1.0"
+  checksum: d0d74e5843c545b9dd4d08a1925dcf88acb463d0473fc60adb61d4594e03575b10544c41122529b47e9556c0071c501d9367d64286a27f3cff51c0132c2401e6
+  languageName: node
+  linkType: hard
+
 "buffer-from@npm:^1.0.0":
   version: 1.1.2
   resolution: "buffer-from@npm:1.1.2"
@@ -3181,7 +3195,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"cloudinary@npm:^1.35.0":
+"cloudinary@npm:^1.41.0":
   version: 1.41.0
   resolution: "cloudinary@npm:1.41.0"
   dependencies:
@@ -3297,7 +3311,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"connect-mongo@npm:^5.0.0":
+"connect-mongo@npm:^5.1.0":
   version: 5.1.0
   resolution: "connect-mongo@npm:5.1.0"
   dependencies:
@@ -3591,7 +3605,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"dotenv@npm:*, dotenv@npm:^16.0.3":
+"dotenv@npm:*, dotenv@npm:^16.3.1":
   version: 16.3.1
   resolution: "dotenv@npm:16.3.1"
   checksum: dbb778237ef8750e9e3cd1473d3c8eaa9cc3600e33a75c0e36415d0fa0848197f56c3800f77924c70e7828f0b03896818cd52f785b07b9ad4d88dba73fbba83f
@@ -3833,7 +3847,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint-plugin-jest@npm:^27.2.3":
+"eslint-plugin-jest@npm:^27.4.2":
   version: 27.4.2
   resolution: "eslint-plugin-jest@npm:27.4.2"
   dependencies:
@@ -3878,7 +3892,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint@npm:^8.48.0":
+"eslint@npm:^8.51.0":
   version: 8.51.0
   resolution: "eslint@npm:8.51.0"
   dependencies:
@@ -4681,7 +4695,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"http-status-codes@npm:^2.2.0":
+"http-status-codes@npm:^2.3.0":
   version: 2.3.0
   resolution: "http-status-codes@npm:2.3.0"
   checksum: 1b8a01940b5e14d3c5b2f842313f4531469b41ce4fa40ca3aae5c82a3101828db2cc9406bfb2d50a46e6d521d106577b6656c2b065c76125b99ee54b2cbbac09
@@ -5578,17 +5592,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"jetBackend@workspace:.":
+"jet-backend@workspace:.":
   version: 0.0.0-use.local
-  resolution: "jetBackend@workspace:."
+  resolution: "jet-backend@workspace:."
   dependencies:
-    "@babel/cli": "npm:^7.21.0"
+    "@babel/cli": "npm:^7.23.0"
     "@babel/core": "npm:^7.23.2"
     "@babel/node": "npm:^7.22.19"
     "@babel/plugin-transform-runtime": "npm:^7.23.2"
     "@babel/preset-env": "npm:^7.23.2"
     "@babel/preset-typescript": "npm:^7.23.2"
-    "@faker-js/faker": "npm:^7.6.0"
+    "@faker-js/faker": "npm:^8.2.0"
     "@types/babel__plugin-transform-runtime": "npm:^7"
     "@types/bcrypt": "npm:^5.0.0"
     "@types/bcryptjs": "npm:^2.4.4"
@@ -5601,32 +5615,34 @@ __metadata:
     "@types/multer": "npm:^1.4.8"
     "@types/node": "npm:^20.8.6"
     "@types/supertest": "npm:^2.0.14"
+    "@types/uuid": "npm:^9"
     "@typescript-eslint/parser": "npm:^6.7.5"
     bcryptjs: "npm:^2.4.3"
-    cloudinary: "npm:^1.35.0"
-    connect-mongo: "npm:^5.0.0"
+    cloudinary: "npm:^1.41.0"
+    connect-mongo: "npm:^5.1.0"
     cors: "npm:^2.8.5"
-    dotenv: "npm:^16.0.3"
+    dotenv: "npm:^16.3.1"
     envalid: "npm:^8.0.0"
-    eslint: "npm:^8.48.0"
-    eslint-plugin-jest: "npm:^27.2.3"
+    eslint: "npm:^8.51.0"
+    eslint-plugin-jest: "npm:^27.4.2"
     expo-server-sdk: "npm:^3.7.0"
     express: "npm:^4.18.2"
     express-session: "npm:^1.17.3"
     http-errors: "npm:^2.0.0"
-    http-status-codes: "npm:^2.2.0"
+    http-status-codes: "npm:^2.3.0"
     jest: "npm:^29.7.0"
-    mongodb: "npm:^5.1.0"
-    mongoose: "npm:^7.0.1"
+    mongodb: "npm:^6.1.0"
+    mongoose: "npm:^7.6.2"
     morgan: "npm:^1.10.0"
     multer: "npm:^1.4.5-lts.1"
     nodemon: "npm:^3.0.1"
-    socket.io: "npm:^4.6.1"
+    socket.io: "npm:^4.7.2"
     supertest: "npm:^6.3.3"
     ts-jest: "npm:^29.1.1"
     ts-node: "npm:^10.9.1"
     ts-node-dev: "npm:^2.0.0"
     typescript: "npm:^5.2.2"
+    uuid: "npm:^9.0.1"
   languageName: unknown
   linkType: soft
 
@@ -6163,7 +6179,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"mongodb@npm:5.9.0, mongodb@npm:^5.1.0":
+"mongodb@npm:5.9.0":
   version: 5.9.0
   resolution: "mongodb@npm:5.9.0"
   dependencies:
@@ -6195,7 +6211,41 @@ __metadata:
   languageName: node
   linkType: hard
 
-"mongoose@npm:^7.0.1":
+"mongodb@npm:^6.1.0":
+  version: 6.1.0
+  resolution: "mongodb@npm:6.1.0"
+  dependencies:
+    "@mongodb-js/saslprep": "npm:^1.1.0"
+    bson: "npm:^6.1.0"
+    mongodb-connection-string-url: "npm:^2.6.0"
+  peerDependencies:
+    "@aws-sdk/credential-providers": ^3.188.0
+    "@mongodb-js/zstd": ^1.1.0
+    gcp-metadata: ^5.2.0
+    kerberos: ^2.0.1
+    mongodb-client-encryption: ">=6.0.0 <7"
+    snappy: ^7.2.2
+    socks: ^2.7.1
+  peerDependenciesMeta:
+    "@aws-sdk/credential-providers":
+      optional: true
+    "@mongodb-js/zstd":
+      optional: true
+    gcp-metadata:
+      optional: true
+    kerberos:
+      optional: true
+    mongodb-client-encryption:
+      optional: true
+    snappy:
+      optional: true
+    socks:
+      optional: true
+  checksum: c0b53a2337293fda5618c186832d8e543e4bc325e3dd9600bd688e8a2c138dffdbdf7feb3f3a4bb3de2efe62f8a3ad70639da4812ae2c605b620fd1637641deb
+  languageName: node
+  linkType: hard
+
+"mongoose@npm:^7.6.2":
   version: 7.6.2
   resolution: "mongoose@npm:7.6.2"
   dependencies:
@@ -7325,7 +7375,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"socket.io@npm:^4.6.1":
+"socket.io@npm:^4.7.2":
   version: 4.7.2
   resolution: "socket.io@npm:4.7.2"
   dependencies:
@@ -8115,6 +8165,15 @@ __metadata:
   version: 1.0.1
   resolution: "utils-merge@npm:1.0.1"
   checksum: 5d6949693d58cb2e636a84f3ee1c6e7b2f9c16cb1d42d0ecb386d8c025c69e327205aa1c69e2868cc06a01e5e20681fbba55a4e0ed0cce913d60334024eae798
+  languageName: node
+  linkType: hard
+
+"uuid@npm:^9.0.1":
+  version: 9.0.1
+  resolution: "uuid@npm:9.0.1"
+  bin:
+    uuid: dist/bin/uuid
+  checksum: 9d0b6adb72b736e36f2b1b53da0d559125ba3e39d913b6072f6f033e0c87835b414f0836b45bcfaf2bdf698f92297fea1c3cc19b0b258bc182c9c43cc0fab9f2
   languageName: node
   linkType: hard
 

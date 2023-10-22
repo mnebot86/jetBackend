@@ -1,9 +1,9 @@
 import bcrypt from 'bcryptjs';
+import { RequestHandler } from 'express';
 import createHttpError from 'http-errors';
 import { StatusCodes } from 'http-status-codes';
 import UserModel from '../models/user';
 import { isEmailValid, passwordValidation } from '../utils/validators';
-import { RequestHandler } from 'express';
 
 export const getAuthenticatedUser: RequestHandler = async (req, res, next) => {
 	try {
@@ -16,10 +16,11 @@ export const getAuthenticatedUser: RequestHandler = async (req, res, next) => {
 };
 
 export const register: RequestHandler = async (req, res, next) => {
-	const { email, password } = req.body;
+	const { firstName, lastName, email, password, position } = req.body;
+	console.log('BODY', req.body);
 
 	try {
-		if (!email || !password) {
+		if (!firstName || !lastName || !email || !password || !position) {
 			throw createHttpError(StatusCodes.BAD_REQUEST, 'Parameters missing');
 		}
 
@@ -36,10 +37,14 @@ export const register: RequestHandler = async (req, res, next) => {
 		const passwordHashed = await bcrypt.hash(password, 10);
 
 		const newUser = await UserModel.create({
+			firstName,
+			lastName,
 			email,
+			position,
 			password: passwordHashed,
 		});
 
+		
 		req.session.userId = newUser._id;
 
 		res.status(StatusCodes.CREATED).json({ ...newUser.toObject(), password: null });

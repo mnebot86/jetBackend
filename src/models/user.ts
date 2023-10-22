@@ -38,35 +38,23 @@ const userSchema = new Schema(
 		},
 		roles: {
 			type: [String],
-			enum: ['COACH', 'TEAM_MOM', 'GUARDIAN', 'PLAYER'],
+			enum: ['COACH', 'PLAYER'],
 			default: ['COACH'],
 		},
 		position: {
 			type: String,
 			enum: [
-				'N/A',
-				'Head',
-				'Assistant',
+				'Head Coach',
+				'Assistant Coach',
 				'Defensive Coordinator',
 				'Offensive Coordinator',
 			],
-			default: 'N/A',
+			required: [true, 'Provide Coaches Position']
 		},
 		group: {
 			type: Schema.Types.ObjectId,
 			ref: 'Group',
 		},
-		backgroundCheck: {
-			type: String,
-			enum: ['Not Complete', 'Pending', 'Completed'],
-			default: 'Not Complete',
-		},
-		players: [
-			{
-				type: Schema.Types.ObjectId,
-				ref: 'Player',
-			},
-		],
 		expoPushTokens: [
 			{
 				type: String,

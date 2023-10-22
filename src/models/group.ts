@@ -7,26 +7,8 @@ const groupSchema = new Schema(
 			required: [true, 'Provide a name for role'],
 			enum: [
 				'Varsity',
-				'Varsity Cheer',
-				'Junior Varsity',
-				'Junior Varsity Cheer',
-				'Peewee',
-				'Peewee Cheer',
-				'Junior Peewee',
-				'Junior Peewee Cheer',
-				'Flag',
-				'Flag Cheer',
+				"Junior Varsity"
 			],
-		},
-		ages: {
-			min: {
-				type: Number,
-				required: [true, 'Provide a min age for this group'],
-			},
-			max: {
-				type: Number,
-				required: [true, 'Provide a max age for this group'],
-			},
 		},
 		roster: [
 			{
@@ -35,12 +17,6 @@ const groupSchema = new Schema(
 			},
 		],
 		coaches: [
-			{
-				type: Schema.Types.ObjectId,
-				ref: 'User',
-			},
-		],
-		teamMoms: [
 			{
 				type: Schema.Types.ObjectId,
 				ref: 'User',

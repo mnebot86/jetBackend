@@ -14,26 +14,14 @@ const playerSchema = new Schema(
 			maxlength: 20,
 			required: [true, 'Please provide last name'],
 		},
-		phoneNumber: {
-			type: String,
-			minlength: 10,
-			required: [true, 'Please provide phone number'],
-		},
 		avatar: {
-			type: Schema.Types.ObjectId,
-			ref: 'Avatar',
+			url: String,
+			imageId: String
 		},
 		group: {
 			type: Schema.Types.ObjectId,
 			ref: 'Group',
 			required: [true, 'Provided a group id'],
-		},
-		age: {
-			type: Number,
-			required: [true, 'Please provide age'],
-		},
-		weight: {
-			type: Number,
 		},
 		isStriper: {
 			type: Boolean,

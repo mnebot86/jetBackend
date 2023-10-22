@@ -1,6 +1,6 @@
 import MongoStore from 'connect-mongo';
 import 'dotenv/config';
-import express, { NextFunction, Request, Response, Application } from 'express';
+import express, { Application, NextFunction, Request, Response } from 'express';
 import session from 'express-session';
 import http from 'http';
 import createHttpError, { isHttpError } from 'http-errors';
@@ -17,6 +17,7 @@ import gameRouter from './routes/gameRouter';
 import groupRouter from './routes/groupRouter';
 import playbookRouter from './routes/playBookRouter';
 import playRouter from './routes/playRouter';
+import playerRouter from './routes/playerRouter';
 import userRouter from './routes/userRouter';
 
 // Constants
@@ -54,6 +55,7 @@ app.use('/api/v1/games', gameRouter);
 app.use('/api/v1/avatar', avatarRouter);
 app.use('/api/v1/feedPosts', feedPostRouter);
 app.use('/api/v1/playbooks', playbookRouter);
+app.use('/api/v1/players', playerRouter)
 app.use('/api/v1/playbooks/:playbookId/formations', formationRouter);
 app.use('/api/v1/playbooks/:playbookId/formations/:formationId/plays', playRouter);
 

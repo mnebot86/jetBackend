@@ -1,98 +1,103 @@
 import { RequestHandler } from 'express';
+import createHttpError from 'http-errors';
 import { StatusCodes } from 'http-status-codes';
 import Group from '../models/group';
+import User from '../models/user';
 
-export const createGroup: RequestHandler = async (req, res) => {
-	const { name, maxAge, minAge } = req.body;
+export const createGroup: RequestHandler = async (req, res, next) => {
+	const { userId } = req.session;
 
-	const groupAlreadyExist = await Group.findOne({ name });
+	const { name } = req.body;
 
-	if (groupAlreadyExist) {
-		res.json({ error: `A group with the name ${name} already exist!` });
+	try {
+		if (!name) throw createHttpError(StatusCodes.BAD_REQUEST, 'Provide a name for this group.');
 
-		// throw new BadRequestError({
-		// 	error: `A group with the name ${name} already exist!`,
-		// });
+		const groupAlreadyExist = await Group.findOne({ name }).exec();
+		
+		if (groupAlreadyExist) throw createHttpError(StatusCodes.CONFLICT, 'This group already exist.');
+
+		const group = await Group.create({ name });
+
+		if (userId) {
+			group.coaches.push(userId);
+		} else {
+			throw createHttpError(StatusCodes.BAD_REQUEST, 'userId is undefined.');
+		}
+
+		await group.save();
+
+		const user = await User.findById(userId);
+
+		if (user) {
+			user.group = group._id;
+		} else {
+			throw createHttpError(StatusCodes.NOT_FOUND, 'User not found.');
+		}
+
+		await user.save();
+
+		res.status(StatusCodes.CREATED).json(group.toObject());
+	} catch (error) {
+		next(error)
 	}
-
-	const group = await Group.create({
-		name,
-		ages: {
-			min: minAge,
-			max: maxAge,
-		},
-	});
-
-	res.status(StatusCodes.CREATED).json({
-		message: 'Group Created',
-		data: {
-			...group,
-		},
-	});
 };
 
-export const getGroups: RequestHandler = async (req, res) => {
-	const groups = await Group.find({});
+export const getGroups: RequestHandler = async (req, res, next) => {
+	try {
+		const groups = await Group.find({}).exec();
+		
+		if (!groups) {
+			return res.status(StatusCodes.OK).json([]);
+		}
 
-	if (!groups) {
-		return res.json({ msg: 'No groups found' });
+		res.status(StatusCodes.OK).json(groups);
+	} catch (error) {
+		next(error);
 	}
-
-	res.status(StatusCodes.OK).json({
-		message: 'Found groups',
-		data: {
-			...groups,
-		},
-	});
 };
 
-export const getGroup: RequestHandler = async (req, res) => {
+export const getGroup: RequestHandler = async (req, res, next) => {
 	const { id } = req.params;
 
-	const group = await Group.findOne({ _id: id }).populate([
-		{ path: 'coaches' },
-		{ path: 'roster' },
-	]);
+	try {
+		const group = await Group.findOne({ _id: id }).exec();
 
-	if (!group) {
-		return res
-			.status(StatusCodes.NOT_FOUND)
-			.json({ error: 'No group found' });
+		if (!group) throw createHttpError(StatusCodes.NOT_FOUND, 'Group not found.')
+
+		return res.status(StatusCodes.OK).json(group.toObject());
+	} catch (error) {
+		next(error);
 	}
-
-	return res.status(StatusCodes.OK).json({
-		message: 'Group Found',
-		data: {
-			...group,
-		},
-	});
 };
 
-export const updateGroup: RequestHandler = async (req, res) => {
+export const updateGroup: RequestHandler = async (req, res, next) => {
 	const { id } = req.params;
 
-	if (!id) {
-		return res.json({ error: 'Please provide group id' });
+	try {
+		if (!id) throw createHttpError(StatusCodes.BAD_REQUEST, 'Please provide group id.');
+
+		const group = await Group.findByIdAndUpdate(id, req.body, { new: true });
+		
+		if (!group) throw createHttpError(StatusCodes.NOT_FOUND, 'Group not found.');
+
+		res.status(StatusCodes.OK).json(group.toObject());
+	} catch (error) {
+		next(error)
 	}
-
-	const group = await Group.findByIdAndUpdate(id, req.body, { new: true });
-
-	res.status(StatusCodes.OK).json({
-		message: 'Group Updated',
-		data: {
-			...group,
-		},
-	});
 };
 
-export const deleteGroup: RequestHandler = async (req, res) => {
+export const deleteGroup: RequestHandler = async (req, res, next) => {
 	const { id } = req.params;
 
-	await Group.findByIdAndDelete(id);
+	try {
+		if (!id) throw createHttpError(StatusCodes.BAD_REQUEST, 'Please provide group id');
 
-	return res.status(StatusCodes.OK).json({
-		data: {
-			message: 'Delete Successful',
-		},
-	});
+		const group = await Group.findByIdAndDelete(id);
+
+		if (!group) throw createHttpError(StatusCodes.NOT_FOUND, 'Group doesn\'t exist');
+
+		return res.sendStatus(StatusCodes.OK);
+	} catch (error) {
+		next(error)
+	}
 };
