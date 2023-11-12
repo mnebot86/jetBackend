@@ -65,8 +65,6 @@ app.use((req, res, next) => {
 
 // eslint-disable-next-line no-unused-vars
 app.use((error: unknown, req: Request, res: Response, next: NextFunction) => {
-	console.error(error);
-
 	let errorMessage = 'An unknown error occurred';
 	let statusCode = StatusCodes.INTERNAL_SERVER_ERROR;
 

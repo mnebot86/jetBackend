@@ -2213,12 +2213,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/multer@npm:^1.4.8":
-  version: 1.4.8
-  resolution: "@types/multer@npm:1.4.8"
+"@types/multer@npm:^1.4.9":
+  version: 1.4.9
+  resolution: "@types/multer@npm:1.4.9"
   dependencies:
     "@types/express": "npm:*"
-  checksum: eb83c6a63a55e3cc802f87c6afc7301504409ce7ede179c63d33e16fe5dfb317ccb0f2f51172f5a94356f008886265dfca72693e7152ebbcf9251d3d5f6e78ad
+  checksum: 57479183efade065fc311f2a2cd56cc0e96488eb0a6565ca9f12eae60f18adc310861792d7b81daf21d777ab5bd0671e90588924037b231ce7adf1aadf980e64
   languageName: node
   linkType: hard
 
@@ -2310,13 +2310,6 @@ __metadata:
   dependencies:
     "@types/superagent": "npm:*"
   checksum: 9f6850a22b8f0fd4c26a6dfd9b64771a66476b1a4f841a3b84a9da843ce69463efbf37594fe107297dd14a225d199b802464d48d70e9413238c637903d392137
-  languageName: node
-  linkType: hard
-
-"@types/uuid@npm:^9":
-  version: 9.0.6
-  resolution: "@types/uuid@npm:9.0.6"
-  checksum: 739dcb2e620ff097fa916edeab455eb75640c4883a850784fdb15b32f67b719e05275c6d6419bb6da11350d26bd14ed05ba5e992ff228411cdd98cbc772d71ef
   languageName: node
   linkType: hard
 
@@ -5612,10 +5605,9 @@ __metadata:
     "@types/http-errors": "npm:^2.0.2"
     "@types/jest": "npm:^29.5.5"
     "@types/morgan": "npm:^1.9.6"
-    "@types/multer": "npm:^1.4.8"
+    "@types/multer": "npm:^1.4.9"
     "@types/node": "npm:^20.8.6"
     "@types/supertest": "npm:^2.0.14"
-    "@types/uuid": "npm:^9"
     "@typescript-eslint/parser": "npm:^6.7.5"
     bcryptjs: "npm:^2.4.3"
     cloudinary: "npm:^1.41.0"
@@ -5642,7 +5634,6 @@ __metadata:
     ts-node: "npm:^10.9.1"
     ts-node-dev: "npm:^2.0.0"
     typescript: "npm:^5.2.2"
-    uuid: "npm:^9.0.1"
   languageName: unknown
   linkType: soft
 
@@ -8165,15 +8156,6 @@ __metadata:
   version: 1.0.1
   resolution: "utils-merge@npm:1.0.1"
   checksum: 5d6949693d58cb2e636a84f3ee1c6e7b2f9c16cb1d42d0ecb386d8c025c69e327205aa1c69e2868cc06a01e5e20681fbba55a4e0ed0cce913d60334024eae798
-  languageName: node
-  linkType: hard
-
-"uuid@npm:^9.0.1":
-  version: 9.0.1
-  resolution: "uuid@npm:9.0.1"
-  bin:
-    uuid: dist/bin/uuid
-  checksum: 9d0b6adb72b736e36f2b1b53da0d559125ba3e39d913b6072f6f033e0c87835b414f0836b45bcfaf2bdf698f92297fea1c3cc19b0b258bc182c9c43cc0fab9f2
   languageName: node
   linkType: hard
 

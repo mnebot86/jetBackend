@@ -8,7 +8,7 @@ import { isEmailValid, passwordValidation } from '../utils/validators';
 export const getAuthenticatedUser: RequestHandler = async (req, res, next) => {
 	try {
 		const user = await UserModel.findById(req.session.userId).exec();
-
+		
 		res.status(StatusCodes.OK).json(user);
 	} catch (error) {
 		next(error);
@@ -16,11 +16,10 @@ export const getAuthenticatedUser: RequestHandler = async (req, res, next) => {
 };
 
 export const register: RequestHandler = async (req, res, next) => {
-	const { firstName, lastName, email, password, position } = req.body;
-	console.log('BODY', req.body);
+	const { firstName, lastName, email, password } = req.body;
 
 	try {
-		if (!firstName || !lastName || !email || !password || !position) {
+		if (!firstName || !lastName || !email || !password) {
 			throw createHttpError(StatusCodes.BAD_REQUEST, 'Parameters missing');
 		}
 
@@ -40,7 +39,6 @@ export const register: RequestHandler = async (req, res, next) => {
 			firstName,
 			lastName,
 			email,
-			position,
 			password: passwordHashed,
 		});
 

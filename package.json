@@ -18,8 +18,7 @@
 		"mongodb": "^6.1.0",
 		"mongoose": "^7.6.2",
 		"multer": "^1.4.5-lts.1",
-		"socket.io": "^4.7.2",
-		"uuid": "^9.0.1"
+		"socket.io": "^4.7.2"
 	},
 	"scripts": {
 		"start": "node dist/server.js",
@@ -46,10 +45,9 @@
 		"@types/http-errors": "^2.0.2",
 		"@types/jest": "^29.5.5",
 		"@types/morgan": "^1.9.6",
-		"@types/multer": "^1.4.8",
+		"@types/multer": "^1.4.9",
 		"@types/node": "^20.8.6",
 		"@types/supertest": "^2.0.14",
-		"@types/uuid": "^9",
 		"@typescript-eslint/parser": "^6.7.5",
 		"dotenv": "^16.3.1",
 		"eslint": "^8.51.0",

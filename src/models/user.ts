@@ -41,16 +41,6 @@ const userSchema = new Schema(
 			enum: ['COACH', 'PLAYER'],
 			default: ['COACH'],
 		},
-		position: {
-			type: String,
-			enum: [
-				'Head Coach',
-				'Assistant Coach',
-				'Defensive Coordinator',
-				'Offensive Coordinator',
-			],
-			required: [true, 'Provide Coaches Position']
-		},
 		group: {
 			type: Schema.Types.ObjectId,
 			ref: 'Group',
