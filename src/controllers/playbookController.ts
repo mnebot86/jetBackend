@@ -11,13 +11,12 @@ export const createPlaybook: RequestHandler = async (req, res) => {
 	const alreadyExist = await Playbook.findOne({ name: req.body.name });
 
 	if (alreadyExist) {
-		return res.status(StatusCodes.BAD_REQUEST).json({
-			error: 'Playbook already exist',
-			data: {},
-		});
+		return res.status(StatusCodes.BAD_REQUEST).json({ error: 'Playbook already exist' });
 	}
 
-	const playbook = await Playbook.create({ ...req.body, createdBy: userId });
+	const getUser = await User.findById(userId);
+
+	const playbook = await Playbook.create({ ...req.body, createdBy: userId, group: getUser?.group });
 
 	const usersWithTokens = await User.find({
 		$and: [
@@ -38,33 +37,14 @@ export const createPlaybook: RequestHandler = async (req, res) => {
 
 	await sendNotifications(tokens, title, body, 'PlaybookScreen');
 
-	return res.status(StatusCodes.CREATED).json({
-		message: 'Playbook created successfully!',
-		data: {
-			playbook,
-		},
-	});
+	return res.status(StatusCodes.CREATED).json(playbook);
 };
 
 export const getPlaybooks: RequestHandler = async (req, res) => {
 	try {
 		const playbooks = await Playbook.find({});
 
-		if (!playbooks || playbooks.length === 0) {
-			return res.status(StatusCodes.OK).json({
-				message: 'No Playbooks Saved',
-				data: {
-					playbooks: [],
-				},
-			});
-		}
-
-		return res.status(StatusCodes.OK).json({
-			message: 'Successfully',
-			data: {
-				playbooks,
-			},
-		});
+		return res.status(StatusCodes.OK).json(playbooks);
 	} catch (error: unknown) {
 		if (error instanceof Error) {
 			return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
