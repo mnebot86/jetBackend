@@ -1,13 +1,6 @@
 import express from 'express';
 import { requireAuth } from '../middleware/checkAuth';
-import * as PlaybookController from '../controllers/playbookController'
-import {
-	createPlaybook,
-	getPlaybooks,
-	getPlaybook,
-	updatePlaybook,
-	deletePlaybook,
-} from '../controllers/playbookController.js';
+import * as PlaybookController from '../controllers/playbookController';
 
 const router = express.Router();
 
