@@ -21,6 +21,7 @@ import playerRouter from './routes/playerRouter';
 import userRouter from './routes/userRouter';
 import videoRouter from './routes/videoRouter';
 import gameFilmRouter from './routes/gameFilmRouter';
+import messageRouter from './routes/messagesRouter';
 
 // Constants
 const app: Application = express();
@@ -62,6 +63,7 @@ app.use('/api/v1/players', playerRouter)
 app.use('/api/v1/playbooks/:playbookId/formations', formationRouter);
 app.use('/api/v1/playbooks/:playbookId/formations/:formationId/plays', playRouter);
 app.use('/api/v1/game-films', gameFilmRouter);
+app.use('/api/v1/messages', messageRouter);
 
 app.use((req, res, next) => {
 	next(createHttpError(StatusCodes.NOT_FOUND, 'Endpoint not found'));
