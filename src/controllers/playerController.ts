@@ -44,9 +44,25 @@ export const createPlayer: RequestHandler = async (req, res, next) => {
 
 export const getPlayers: RequestHandler = async (req, res, next) => {
   try {
-    const players = await Player.find({});
+    const players = await Player.find({}).sort({lastName: 1});
 
     return res.status(StatusCodes.OK).json(players);
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const getPlayer: RequestHandler = async (req, res, next) => {
+  const { playerId } = req.params;
+
+  try {
+    const player = await Player.findById(playerId);
+
+    if (!player) {
+      return res.status(StatusCodes.NOT_FOUND).json({ error: 'Player not found' });
+    }
+
+    return res.status(StatusCodes.OK).json(player);
   } catch (error) {
     next(error);
   }

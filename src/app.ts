@@ -59,7 +59,7 @@ app.use('/api/v1/avatar', avatarRouter);
 app.use('/api/v1/videos', videoRouter)
 app.use('/api/v1/feedPosts', feedPostRouter);
 app.use('/api/v1/playbooks', playbookRouter);
-app.use('/api/v1/players', playerRouter)
+app.use('/api/v1/players', playerRouter);
 app.use('/api/v1/playbooks/:playbookId/formations', formationRouter);
 app.use('/api/v1/playbooks/:playbookId/formations/:formationId/plays', playRouter);
 app.use('/api/v1/game-films', gameFilmRouter);
