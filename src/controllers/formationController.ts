@@ -4,6 +4,7 @@ import { StatusCodes } from 'http-status-codes';
 import { v2 as cloudinary } from 'cloudinary';
 import { initializeCloudinary } from '../utils/cloudinary';
 import { RequestHandler } from 'express';
+import { io } from '../app';
 
 initializeCloudinary();
 
@@ -46,12 +47,9 @@ export const createFormation: RequestHandler = async (req, res) => {
 			{ new: true }
 		);
 
-		return res.status(StatusCodes.CREATED).json({
-			message: 'Formation created successfully',
-			data: {
-				formation,
-			},
-		});
+		io.emit('new_formation', formation);
+		
+		return res.status(StatusCodes.CREATED).json(formation);
 	} catch (err) {
 		console.error(err);
 

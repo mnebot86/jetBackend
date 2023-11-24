@@ -65,14 +65,10 @@ export const getPlaybook: RequestHandler = async (req, res) => {
 	if (!playbook) {
 		return res.status(StatusCodes.NOT_FOUND).json({
 			error: 'Post not found',
-			data: {},
 		});
 	}
 
-	return res.status(StatusCodes.OK).json({
-		message: 'Playbook found!',
-		data: playbook,
-	});
+	return res.status(StatusCodes.OK).json(playbook);
 };
 
 export const updatePlaybook: RequestHandler = async (req, res) => {
