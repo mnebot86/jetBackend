@@ -1,6 +1,8 @@
 import { RequestHandler } from "express";
 import { v2 as cloudinary } from "cloudinary";
 import { StatusCodes } from "http-status-codes";
+import GameFilm from "../models/gameFilm";
+import { initializeCloudinary } from "../utils/cloudinary";
 
 interface Video {
   fieldname: string;
@@ -51,31 +53,51 @@ interface CloudindaryResponse {
   api_key: string;
 }
 
+initializeCloudinary();
+
 export const videosUpload: RequestHandler = async (req, res, next) => {
-  const videos = req.files as Video[];
+  const { gameFilmId } = req.params;
+  const { team, year } = req.body;
 
-  if (videos?.length) {
-    const cloudinaryResponses: Video[] = [];
+  const videoUrls: string[] = [];
 
-	let count = 0;
-	  
-    try {
-      for (const video of videos) {
-		  
-        const result = await cloudinary.uploader.upload(video.path, {
-          resource_type: "video",
-			public_id: `video/${video.originalname}-${count}`
-		});
+  try {
+    await Promise.all(
+      (req.files as Express.Multer.File[]).map((file) => {
+        return new Promise<void>((resolve, reject) => {
+          cloudinary.uploader.upload_large(
+            file.path,
+            { resource_type: "video", chunk_size: 10485760, tags: [team, year] },
+            (error, result) => {
+              if (error) {
+                console.error(`Cloudinary Upload Error:`, error);
+                reject(error);
+              } else {
+                console.log(result);
+                if (result && result.secure_url) {
+                  videoUrls.push(result.secure_url);
+                }
+                resolve();
+              }
+            }
+          );
+        });
+      })
+    );
 
-        cloudinaryResponses.push(result.playback_url);
-
-        count++;
+    const gameFilm = await GameFilm.findByIdAndUpdate(
+      gameFilmId,
+      {
+        $push: { videos: { $each: videoUrls } },
+      },
+      {
+        new: true,
       }
+    );
 
-		res.status(StatusCodes.OK).json(cloudinaryResponses);
-    } catch (error) {
-      console.error(error);
-      next(error); 
-    }
+    res.status(StatusCodes.OK).json(gameFilm);
+  } catch (error) {
+    console.error(`ERROR`, error);
+    next(error);
   }
 };

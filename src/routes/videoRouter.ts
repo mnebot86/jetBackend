@@ -5,10 +5,10 @@ import { setupMulter } from "../utils/muter";
 
 const uploads = setupMulter();
 
-const router = express.Router();
+const router = express.Router({ mergeParams: true });
 
 router
-  .route("/upload")
-  .post(uploads.array("videos"), requireAuth, VideoController.videosUpload);
+  .route("/")
+  .post(uploads.array("videos", 20), requireAuth, VideoController.videosUpload);
 
 export default router;

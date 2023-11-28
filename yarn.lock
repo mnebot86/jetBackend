@@ -5627,6 +5627,7 @@ __metadata:
     mongoose: "npm:^7.6.2"
     morgan: "npm:^1.10.0"
     multer: "npm:^1.4.5-lts.1"
+    multer-storage-cloudinary: "npm:^4.0.0"
     nodemon: "npm:^3.0.1"
     socket.io: "npm:^4.7.2"
     supertest: "npm:^6.3.3"
@@ -6298,6 +6299,15 @@ __metadata:
   version: 2.1.3
   resolution: "ms@npm:2.1.3"
   checksum: aa92de608021b242401676e35cfa5aa42dd70cbdc082b916da7fb925c542173e36bce97ea3e804923fe92c0ad991434e4a38327e15a1b5b5f945d66df615ae6d
+  languageName: node
+  linkType: hard
+
+"multer-storage-cloudinary@npm:^4.0.0":
+  version: 4.0.0
+  resolution: "multer-storage-cloudinary@npm:4.0.0"
+  peerDependencies:
+    cloudinary: ^1.21.0
+  checksum: fd4754a4161e39d4a6f519c291d50b0cab8747be34b7685ad10840537d7bf82b79dbf0d758da659a387c69b0e9dcba878acf8142a73aa7b5ca8f24e59f5df2a3
   languageName: node
   linkType: hard
 
