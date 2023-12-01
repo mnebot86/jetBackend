@@ -67,7 +67,7 @@ export const videosUpload: RequestHandler = async (req, res, next) => {
         return new Promise<void>((resolve, reject) => {
           cloudinary.uploader.upload_large(
             file.path,
-            { resource_type: "video", chunk_size: 10485760, tags: [team, year] },
+            { resource_type: "video", chunk_size: 10485760, tags: [team, year], folder: 'gameFilm' },
             (error, result) => {
               if (error) {
                 console.error(`Cloudinary Upload Error:`, error);
@@ -75,7 +75,7 @@ export const videosUpload: RequestHandler = async (req, res, next) => {
               } else {
                 console.log(result);
                 if (result && result.secure_url) {
-                  videoUrls.push(result.secure_url);
+                  videoUrls.push(result.playback_url);
                 }
                 resolve();
               }

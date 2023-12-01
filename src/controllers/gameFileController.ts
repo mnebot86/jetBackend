@@ -47,3 +47,19 @@ export const getGameFilms: RequestHandler = async (req, res, next) => {
 		next(error);
 	}
 }
+
+export const getGameFilm: RequestHandler = async (req, res, next) => {
+	const { gameFilmId } = req.params;
+
+	try {
+		const gameFilm = await GameFilm.findById(gameFilmId);
+		
+		if (!gameFilm) {
+			return res.status(StatusCodes.NOT_FOUND).json({ error: 'No game film found'})
+		}
+
+		return res.status(StatusCodes.OK).json(gameFilm);
+	} catch (error) {
+		next(error);
+	}
+}
