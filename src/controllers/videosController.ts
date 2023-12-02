@@ -3,6 +3,7 @@ import { v2 as cloudinary } from "cloudinary";
 import { StatusCodes } from "http-status-codes";
 import GameFilm from "../models/gameFilm";
 import { initializeCloudinary } from "../utils/cloudinary";
+import { io } from "../app";
 
 interface Video {
   fieldname: string;
@@ -95,6 +96,8 @@ export const videosUpload: RequestHandler = async (req, res, next) => {
       }
     );
 
+    io.emit('video_upload', gameFilm?.videos);
+    
     res.status(StatusCodes.OK).json(gameFilm);
   } catch (error) {
     console.error(`ERROR`, error);
