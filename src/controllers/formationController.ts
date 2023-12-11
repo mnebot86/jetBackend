@@ -17,10 +17,7 @@ export const createFormation: RequestHandler = async (req, res) => {
 		const alreadyExist = await Formation.findOne({ name });
 
 		if (alreadyExist) {
-			return res.status(StatusCodes.BAD_REQUEST).json({
-				error: `${name} already exist`,
-				field: 'name',
-			});
+			return res.status(StatusCodes.BAD_REQUEST).json({ error: `${name} already exist` });
 		}
 		
 		const formation = await Formation.create({ 
@@ -88,21 +85,15 @@ export const getFormation: RequestHandler = async (req, res) => {
 	const { params: { id } } = req;
 
 	try {
-		const formation = await Formation.findById(id);
+		const formation = await Formation.findById(id).populate('plays');
 
 		if (!formation) {
 			return res.status(StatusCodes.NOT_FOUND).json({
-				message: 'Formation Not Found',
-				data: {},
+				error: 'Formation Not Found',
 			});
 		}
 
-		return res.status(StatusCodes.OK).json({
-			message: 'Success',
-			data: {
-				formation,
-			},
-		});
+		return res.status(StatusCodes.OK).json(formation);
 	} catch (err) {
 		console.error(err);
 
@@ -132,8 +123,6 @@ export const updateFormation: RequestHandler = async (req, res) => {
 		if (req.file) {
 			const result = await cloudinary.uploader.upload(req.file.path, {
 				public_id: `formation/${formation._id}`,
-				width: 500,
-				height: 500,
 				crop: 'fill',
 			});
 

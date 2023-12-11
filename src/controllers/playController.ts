@@ -4,10 +4,11 @@ import { StatusCodes } from 'http-status-codes';
 import Formation from '../models/formation';
 import Play from '../models/play';
 import { initializeCloudinary } from '../utils/cloudinary';
+import { io } from '../app';
 
 initializeCloudinary();
 
-export const createPlay: RequestHandler = async (req, res) => {
+export const createPlay: RequestHandler = async (req, res, next) => {
 	const { params: { formationId } } = req;
 
 	try {
@@ -16,10 +17,7 @@ export const createPlay: RequestHandler = async (req, res) => {
 		const alreadyExist = await Play.findOne({ name });
 
 		if (alreadyExist) {
-			return res.status(StatusCodes.BAD_REQUEST).json({
-				error: `${name} already exists`,
-				field: 'name',
-			});
+			return res.status(StatusCodes.BAD_REQUEST).json({ error: `${name} already exists` });
 		}
 
 		const play = await Play.create({
@@ -36,8 +34,6 @@ export const createPlay: RequestHandler = async (req, res) => {
 		if (req.file) {
 			const result = await cloudinary.uploader.upload(req.file.path, {
 				public_id: `play/${play._id}`,
-				width: 500,
-				height: 500,
 				crop: 'fill',
 			});
 
@@ -49,12 +45,9 @@ export const createPlay: RequestHandler = async (req, res) => {
 			await play.save();
 		}
 
-		return res.status(StatusCodes.CREATED).json({
-			message: 'Play created successfully',
-			data: {
-				play,
-			},
-		});
+		io.emit('new_play', play);
+		
+		return res.status(StatusCodes.CREATED).json(play);
 	} catch (err) {
 		console.error(err);
 
@@ -141,8 +134,6 @@ export const updatePlay: RequestHandler = async (req, res) => {
 		if (req.file) {
 			const result = await cloudinary.uploader.upload(req.file.path, {
 				public_id: `play/${play._id}`,
-				width: 500,
-				height: 500,
 				crop: 'fill',
 			});
 

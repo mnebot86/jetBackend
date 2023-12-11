@@ -126,6 +126,7 @@ export const deleteGame: RequestHandler = async (req, res) => {
 
 	const game = await Game.findByIdAndDelete(id);
 
+	//typescript error!
 	if (game) {
 		await Group.findByIdAndUpdate(
 			game.group,

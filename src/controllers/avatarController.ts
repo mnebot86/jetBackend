@@ -12,8 +12,6 @@ export const createAvatar: RequestHandler = async (req, res, next) => {
     if (req.file) {
       const result = await cloudinary.uploader.upload(req.file.path, {
         public_id: `avatar/${uniqueId}`,
-        width: 500,
-        height: 500,
         crop: "fill",
       });
 
