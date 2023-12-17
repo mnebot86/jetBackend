@@ -13,7 +13,7 @@ import env from './utils/validateEnv';
 import avatarRouter from './routes/avatarRouter';
 import feedPostRouter from './routes/feedPostRouter';
 import formationRouter from './routes/formationRouter';
-import gameRouter from './routes/gameRouter';
+// import gameRouter from './routes/gameRouter';
 import groupRouter from './routes/groupRouter';
 import playbookRouter from './routes/playBookRouter';
 import playRouter from './routes/playRouter';
@@ -54,7 +54,7 @@ app.get('/api/v1', (req, res) => {
 
 app.use('/api/v1/auth', userRouter);
 app.use('/api/v1/groups', groupRouter);
-app.use('/api/v1/games', gameRouter);
+// app.use('/api/v1/games', gameRouter);
 app.use('/api/v1/avatar', avatarRouter);
 app.use('/api/v1/feedPosts', feedPostRouter);
 app.use('/api/v1/playbooks', playbookRouter);
