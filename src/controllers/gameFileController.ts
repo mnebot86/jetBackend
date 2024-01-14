@@ -52,7 +52,7 @@ export const getGameFilm: RequestHandler = async (req, res, next) => {
 	const { gameFilmId } = req.params;
 
 	try {
-		const gameFilm = await GameFilm.findById(gameFilmId);
+		const gameFilm = await GameFilm.findById(gameFilmId).populate('videos');
 		
 		if (!gameFilm) {
 			return res.status(StatusCodes.NOT_FOUND).json({ error: 'No game film found'})

@@ -2,45 +2,21 @@ import { InferSchemaType, Schema, model } from 'mongoose';
 
 const videoSchema = new Schema(
 	{
-		title: {
-			type: String,
-		},
-		fileName: {
-			type: String,
-			required: [true, 'Provide a filename'],
-		},
-		description: {
-			type: String,
-		},
 		url: {
 			type: String,
-			required: [true, 'Provide a url'],
+            require: [true, 'Please provide video url']
 		},
-		thumbnailUrl: {
-			type: String,
-		},
-		duration: {
-			type: Number,
-		},
-		size: {
-			type: Number,
-		},
-		mimeType: {
-			type: String,
-		},
-		uploadedBy: {
-			type: Schema.Types.ObjectId,
-			ref: 'User',
-			required: true,
-		},
-		category: {
-			type: String,
-			enum: ['GameFile', 'Tutorial'],
-		},
-		group: {
-			type: Schema.Types.ObjectId,
-			ref: 'Group',
-		},
+		comments: [{
+			comment: String,
+			playerTags: [{
+				type: Schema.Types.ObjectId,
+				ref: 'Player'
+			}],
+			createdBy: {
+				type: Schema.Types.ObjectId,
+                ref: 'User'
+			}
+		}]
 	},
 	{ timestamps: true }
 );
