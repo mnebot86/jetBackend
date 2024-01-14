@@ -7,9 +7,10 @@ const gameFilmSchema = new Schema(
 			type: String,
 			require: [true, 'Please provide team name']
 		},
-		videos: {
-			type: [String]
-		},
+		videos: [{
+			type: Schema.Types.ObjectId,
+            ref: 'Video'
+		}],
 		group: {
 			type: Schema.Types.ObjectId,
 			ref: 'Group'

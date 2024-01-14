@@ -1,9 +1,10 @@
-import { RequestHandler } from "express";
 import { v2 as cloudinary } from "cloudinary";
+import { RequestHandler } from "express";
 import { StatusCodes } from "http-status-codes";
-import GameFilm from "../models/gameFilm";
-import { initializeCloudinary } from "../utils/cloudinary";
 import { io } from "../app";
+import GameFilm from "../models/gameFilm";
+import Video from "../models/video";
+import { initializeCloudinary } from "../utils/cloudinary";
 
 interface Video {
   fieldname: string;
@@ -15,43 +16,16 @@ interface Video {
   path: string;
 }
 
-interface CloudindaryResponse {
-  asset_id: string;
-  public_id: string;
-  version: number;
-  version_id: string;
-  signature: string;
-  width: number;
-  height: number;
-  format: string;
-  resource_type: string;
-  created_at: string;
-  tags: string[];
-  pages: number;
-  bytes: number;
-  type: string;
-  etag: string;
-  placeholder: boolean;
-  url: string;
-  secure_url: string;
-  playback_url: string;
-  folder: string;
-  audio: any;
-  video: {
-    pix_format: string;
-    codec: string;
-    level: number;
-    profile: string;
-    bit_rate: string;
-    time_base: string;
-  };
-  frame_rate: number;
-  bit_rate: number;
-  duration: number;
-  rotation: number;
-  original_filename: string;
-  nb_frames: number;
-  api_key: string;
+interface Comment {
+  comment: String,
+  playerTags: string[],
+  createdBy: string
+}
+
+interface VideoModel {
+  _id: string;
+  url: string,
+  comments?: Comment[],
 }
 
 initializeCloudinary();
@@ -61,14 +35,14 @@ export const videosUpload: RequestHandler = async (req, res, next) => {
   const { team, year } = req.body;
 
   const videoUrls: string[] = [];
-
+  
   try {
     await Promise.all(
       (req.files as Express.Multer.File[]).map((file) => {
         return new Promise<void>((resolve, reject) => {
           cloudinary.uploader.upload_large(
             file.path,
-            { resource_type: "video", chunk_size: 10485760, tags: [team, year], folder: 'gameFilm' },
+            { resource_type: "video", tags: [team, year], folder: 'gameFilm' },
             (error, result) => {
               if (error) {
                 console.error(`Cloudinary Upload Error:`, error);
@@ -85,17 +59,30 @@ export const videosUpload: RequestHandler = async (req, res, next) => {
         });
       })
     );
+    
+    const videoModelsPromises: Promise<VideoModel>[] = videoUrls.map(async (url) => {
+      const newVideoModelDocument = await Video.create({
+        url,
+        comments: [],
+      });
+    
+      const newVideoModel: VideoModel = newVideoModelDocument.toObject();
+    
+      return newVideoModel;
+    });
+
+    const resolvedVideoModels = await Promise.all(videoModelsPromises);
 
     const gameFilm = await GameFilm.findByIdAndUpdate(
       gameFilmId,
       {
-        $push: { videos: { $each: videoUrls } },
+        $push: { videos: { $each: resolvedVideoModels } },
       },
       {
         new: true,
       }
-    );
-
+    ).populate('videos');;
+    
     io.emit('video_upload', gameFilm?.videos);
     
     res.status(StatusCodes.OK).json(gameFilm);
