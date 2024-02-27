@@ -6,7 +6,12 @@ const videoSchema = new Schema(
 			type: String,
             require: [true, 'Please provide video url']
 		},
+		thumbnail: {
+			type: String,
+            require: [true, 'Please provide video url']
+		},
 		comments: [{
+			videoTimestamp: Number,
 			comment: String,
 			playerTags: [{
 				type: Schema.Types.ObjectId,

@@ -10,5 +10,6 @@ const router = express.Router({ mergeParams: true });
 router
   .route("/")
   .post(uploads.array("videos", 20), requireAuth, VideoController.videosUpload);
-
+  
+router.route("/:videoId").post(VideoController.addVideoComment);
 export default router;

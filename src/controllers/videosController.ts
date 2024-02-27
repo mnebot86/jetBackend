@@ -48,9 +48,8 @@ export const videosUpload: RequestHandler = async (req, res, next) => {
                 console.error(`Cloudinary Upload Error:`, error);
                 reject(error);
               } else {
-                console.log(result);
                 if (result && result.secure_url) {
-                  videoUrls.push(result.playback_url);
+                  videoUrls.push(result.secure_url);
                 }
                 resolve();
               }
@@ -91,3 +90,29 @@ export const videosUpload: RequestHandler = async (req, res, next) => {
     next(error);
   }
 };
+
+export const addVideoComment: RequestHandler = async (req, res, next) => {
+  const { userId } = req.session;
+  const { videoId } = req.params;
+  const { videoTimestamp, comment, playerTags, createdBy } = req.body;
+
+  try {
+    const video = await Video.findByIdAndUpdate(
+      videoId,
+      {
+        $push: { comments: { videoTimestamp, comment, playerTags, createdBy: userId } },
+      },
+      {
+        new: true,
+      }
+    )
+
+
+    io.emit('video_comment', video);
+
+    res.status(StatusCodes.OK).json(video);
+  } catch (error) {
+    console.error(`ERROR`, error);
+    next(error);
+  }
+}
